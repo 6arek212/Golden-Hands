@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const checkFields = require('../middleware/check_fields')
-const { login, signup } = require('../controller/authContoller')
+const { login, signup } = require('../controller/authController')
 
 
 

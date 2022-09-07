@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const citiesController = require('../controller/citiesContoller')
+const citiesController = require('../controller/citiesController')
 
 router.get('', citiesController.getCities)
 

@@ -26,15 +26,15 @@ exports.getAppointments = async (req, res, next) => {
 
 
 
-    if (currentPage && pageSize) {
-        query.skip(pageSize * (currentPage - 1))
-            .limit(pageSize)
-    }
+    // if (currentPage && pageSize) {
+    //     query.skip(pageSize * (currentPage - 1))
+    //         .limit(pageSize)
+    // }
 
 
-    if (customerId) {
-        query.where({ customer: customerId })
-    }
+    // if (customerId) {
+    //     query.where({ customer: customerId })
+    // }
 
 
     try {
@@ -55,7 +55,7 @@ exports.getAppointments = async (req, res, next) => {
 
 // only barbers role can use this !!
 exports.createAppointment = async (req, res, next) => {
-    const { worker, start_time, end_time, } = req.body
+    const { worker, start_time, end_time, workingDate } = req.body
     
     const current_date = new Date()
     const s_time = new Date(start_time)
@@ -119,7 +119,8 @@ exports.createAppointment = async (req, res, next) => {
     const appointment = await Appointment.create({
         worker: worker , 
         start_time: start_time , 
-        end_time: end_time
+        end_time: end_time , 
+        workingDate: workingDate
     })
     
     res.status(201).json({
@@ -150,6 +151,7 @@ exports.getAvailableAppointments = async (req ,res , next) => {
     const date2 = new Date(date)
     date2.setDate(date2.getDate() + 1)
 
+
     const appointments = await Appointment.find({
         start_time: {
             $gte: new Date(date1),
@@ -157,11 +159,11 @@ exports.getAvailableAppointments = async (req ,res , next) => {
         },
         customer : null ,
         worker
-    })
+    }).populate('worker' , 'firstName lastName phone')
 
     res.status(200).json({
         message:'fetched success',
-        appointments
+        availableAppointments: appointments
     })
 }
 
@@ -170,7 +172,7 @@ exports.getUserAppointment = async (req, res, next) => {
     console.log('--------------- getAppointment requrest ----------------------------');
     const user = req.user
     try {
-        const appointment = await Appointment.findOne({customer: user})
+        const appointment = await Appointment.findOne({customer: user}).populate('worker' , 'firstName lastName phone')
 
         res.status(200).json({
             message: 'fetched appointment successfull',
@@ -181,6 +183,22 @@ exports.getUserAppointment = async (req, res, next) => {
     }
 }
 
+
+
+exports.getUserAppointments = async (req, res, next) => {
+    
+    const user = req.user
+    try {
+        const appointments = await Appointment.find({ customer: user }).populate('worker', 'firstName lastName phone').sort({ 'isActive': -1 })
+
+        res.status(200).json({
+            message: 'fetched appointment successfull',
+            appointments
+        })
+    } catch (e) {
+        next(e)
+    }
+}
 
 
 // only admin can update an appointment !!!!
@@ -266,6 +284,7 @@ exports.unbookAppointment = async (req, res, next) => {
         const { appointmentId } = req.body
         const customerId = req.user
 
+        console.log(appointmentId);
         const appointment = await Appointment.findOne({ _id: appointmentId })
         if (!appointment) {
             return res.status(404).json({

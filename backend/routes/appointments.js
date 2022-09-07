@@ -7,7 +7,8 @@ const { getAppointments,
     unbookAppointment,
     getAvailableAppointments,
     createAppointment,
-    getUserAppointment
+    getUserAppointment,
+    getUserAppointments
 } = require('../controller/appointmentsController')
 
 
@@ -28,6 +29,8 @@ router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
 //customer routes
 
 router.get('/user-appointment' , requireAuth , getUserAppointment)
+
+router.get('/user-appointments' , requireAuth , getUserAppointments)
 
 router.get('/available' , requireAuth, getAvailableAppointments)
 

@@ -6,9 +6,10 @@ const mongoose = require('mongoose')
 
 
 const appointmentsRouter = require('./routes/appointments')
-const customersRoutes = require('./routes/customers')
+const usersRoutes = require('./routes/users')
 const citiesRoutes = require('./routes/cities')
 const authRoutes = require('./routes/auth')
+const workersRoutes = require('./routes/workers')
 
 const app = express()
 // moment.locale('Asia/Hebron')
@@ -41,8 +42,9 @@ app.use(bodyParser.json())
 
 app.use('/api/appointments' , appointmentsRouter)
 app.use('/api/cities', citiesRoutes)
-app.use('/api/customers', customersRoutes)
-app.use('/api/', authRoutes)
+app.use('/api/users', usersRoutes)
+app.use('/api', authRoutes)
+app.use('/api/workers', workersRoutes)
 
 
 
@@ -61,7 +63,7 @@ app.use((req, res, next) => {
 
 //handling all errors
 app.use((error, req, res, next) => {
-  console.log(error.message)
+  console.log(req.path, error.message)
   res.status(error.status || 500);
   res.json({
     error: {
