@@ -4,7 +4,6 @@ const { requireAuth, requireWorkerAuth } = require('../middleware/check-auth')
 
 
 
-router.post('/search', requireWorkerAuth, search)
 
 router.get('/', requireWorkerAuth, getUsers)
 
@@ -13,7 +12,7 @@ router.delete('/:userId', requireWorkerAuth, deleteUser)
 
 
 
-router.get('/', requireAuth, getUser)
+router.get('/:userId', requireAuth, getUser)
 
 router.patch('/', requireAuth,updateUser)
 

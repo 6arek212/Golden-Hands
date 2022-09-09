@@ -2,6 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const expressJSDocSwagger = require('express-jsdoc-swagger');
+const path = require("path")
 
 
 
@@ -14,6 +16,22 @@ const workersRoutes = require('./routes/workers')
 const app = express()
 // moment.locale('Asia/Hebron')
 
+
+
+const options = {
+  info: {
+    version: '1.0.0',
+    title: 'Appointments Managing System',
+    license: {
+      name: 'By Tarik Husin',
+    },
+  },
+  filesPattern: './example.js',
+  baseDir: __dirname,
+  filesPattern: './**/*.js',
+};
+
+expressJSDocSwagger(app)(options);
 
 mongoose.connect(process.env.MONGO_URI,
   { useNewUrlParser: true, useUnifiedTopology: true })
@@ -38,6 +56,10 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
+
+
+const html = path.join(__dirname, 'imgs')
+app.use('/imgs', express.static(html));
 
 
 app.use('/api/appointments' , appointmentsRouter)

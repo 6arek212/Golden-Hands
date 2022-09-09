@@ -27,6 +27,7 @@ exports.login = async (req, res, next) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 phone: user.phone , 
+                role: user.role,
                 adminMode
             },
             token,
@@ -57,6 +58,7 @@ exports.signup = async (req, res, next) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 phone: user.phone , 
+                role: user.role,
                 adminMode
             },
             token

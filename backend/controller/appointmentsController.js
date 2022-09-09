@@ -1,45 +1,67 @@
 const Appointment = require('../models/appointment')
 const User = require('../models/user')
-const moment = require('moment')
 
 
-const getAppointmentsForBarber = ()=>{
-    
-}
 
-const getAppointmentsForCustomer = ()=>{
-    
-}
 
-// only barbers role can use this !!
 exports.getAppointments = async (req, res, next) => {
     console.log('--------------- getAppointments requrest ----------------------------');
-    const { barber , service , start_time , end_time , page , pageSize } =  req.query
-
+    const { barber, service, start_time, end_time, pageSize, currentPage, customerId, sort , isActive } = req.query
 
     const query = Appointment.find()
     
+    //isActive
+    if(isActive){
+        query.where({ isActive: isActive })
+    }
 
+    //service
+    if(service){
+        query.where({ service: service })
+    }
+
+    //barber
     if(barber){
-        query.where({barber})        
+        query.where({ barber: barber })        
     }
 
 
+    //customer
+    if (customerId) {
+        query.where({ customer: customerId })
+    }
 
-    // if (currentPage && pageSize) {
-    //     query.skip(pageSize * (currentPage - 1))
-    //         .limit(pageSize)
-    // }
+
+    //start time constrian
+    if(start_time){
+        query.where('start_time').gt(new Date(start_time))
+    }
 
 
-    // if (customerId) {
-    //     query.where({ customer: customerId })
-    // }
+    //end time constrain
+    if(end_time){
+        query.where('end_time').lt(new Date(end_time))
+    }
 
+    //sort 
+    if(sort){
+        query.sort({ start_time: sort })
+    }
+
+   
 
     try {
-        const count = await Appointment.count()
-        const appointments = await query.sort({ date: 'desc', time: 'desc' })
+        const q1 = query.clone()
+        const count = await q1.count()
+
+
+        //paging
+        if (currentPage && pageSize) {
+            query.skip(pageSize * (currentPage - 1))
+                .limit(pageSize)
+        }
+
+        const appointments = await query.populate('worker customer' , 'firstName lastName phone role')
 
         res.status(200).json({
             message: 'fetched appointments successfull',
@@ -159,7 +181,7 @@ exports.getAvailableAppointments = async (req ,res , next) => {
         },
         customer : null ,
         worker
-    }).populate('worker' , 'firstName lastName phone')
+    }).populate('worker' , 'firstName lastName phone role image')
 
     res.status(200).json({
         message:'fetched success',
@@ -172,7 +194,7 @@ exports.getUserAppointment = async (req, res, next) => {
     console.log('--------------- getAppointment requrest ----------------------------');
     const user = req.user
     try {
-        const appointment = await Appointment.findOne({customer: user}).populate('worker' , 'firstName lastName phone')
+        const appointment = await Appointment.findOne({customer: user}).populate('worker' , 'firstName lastName phone role image')
 
         res.status(200).json({
             message: 'fetched appointment successfull',
@@ -189,7 +211,7 @@ exports.getUserAppointments = async (req, res, next) => {
     
     const user = req.user
     try {
-        const appointments = await Appointment.find({ customer: user }).populate('worker', 'firstName lastName phone').sort({ 'isActive': -1 })
+        const appointments = await Appointment.find({ customer: user }).populate('worker', 'firstName lastName phone role image').sort({ 'isActive': -1 })
 
         res.status(200).json({
             message: 'fetched appointment successfull',
@@ -205,9 +227,9 @@ exports.getUserAppointments = async (req, res, next) => {
 exports.updateAppointment = async (req, res, next) => {
     const { _id: customerId } = req.user
 
-    const appointment = await Appointment.findOneAndUpdate({ _id: customerId }, { ...req.body }, { new: true, runValidators: true })
+    // const appointment = await Appointment.findOneAndUpdate({ _id: customerId }, { ...req.body }, { new: true, runValidators: true })
     res.status(201).json({
-        message: 'appointment booked !',
+        message: 'appointment updated !',
         appointment
     })
 }

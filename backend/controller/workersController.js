@@ -5,7 +5,7 @@ const Schedule = require('../models/schedule')
 
 module.exports.getWorkers = async (req,res,next)=>{
 
-    const workers = await User.find().where('role').ne('customer').select('_id firstName lastName phone')
+    const workers = await User.find().where('role').ne('customer').select('_id firstName lastName phone role image')
 
     res.status(200).json({
         message: 'fetch success',
@@ -16,6 +16,13 @@ module.exports.getWorkers = async (req,res,next)=>{
 
 module.exports.getWorkingDates =async (req,res,next)=>{
     const { workerId , fromDate } = req.query
+
+    // if(!workerId || !fromDate){
+    //     return res.status(400).json({
+    //         message:'you need to provide workerId and fromDate'
+    //     })
+    // }
+
 
     const from = new Date(fromDate)
     const to = new Date(from)
