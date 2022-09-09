@@ -1,6 +1,5 @@
 require("dotenv").config()
 const app = require("./app");
-const debug = require("debug")("node");
 const http = require("http");
  
 
@@ -42,7 +41,6 @@ const onError = error => {
 const onListening = () => {
   const addr = server.address();
   const bind = typeof port === "string" ? "pipe " + addr : "port " + port;
-  debug("Listening on " + bind);
   console.log('server started', port)
 };
 
