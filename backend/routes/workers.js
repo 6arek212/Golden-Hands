@@ -1,8 +1,9 @@
 const router = require('express').Router()
-const { getWorkers , getWorkingDates , insertWorkingDate} = require('../controller/workersController')
+const { getWorkers, getWorkingDates, insertWorkingDate, getWorker } = require('../controller/workersController')
 const { requireWorkerAuth , requireAuth} = require('../middleware/check-auth')
 
-router.get('/', requireAuth, getWorkers)
+
+
 
 
 //workerId , fromDate query params
@@ -11,6 +12,13 @@ router.get('/working-dates', requireAuth, getWorkingDates)
 
 // date on body
 router.post('/working-date', requireWorkerAuth, insertWorkingDate)
+
+
+
+router.get('/', requireAuth, getWorkers)
+
+
+router.get('/:workerId', requireAuth, getWorker)
 
 
 module.exports = router
