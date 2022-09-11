@@ -149,7 +149,7 @@ exports.createAppointment = async (req, res, next) => {
 
     if (workingDateData.date <= e_time) {
         return res.status(400).json({
-            message:'end_time must be in the current working date interval bettween 00:00 to 23:59'
+            message:'end_time must be in the current working date interval between 00:00 to 23:59'
         })
     }
 
