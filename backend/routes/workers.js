@@ -1,17 +1,17 @@
 const router = require('express').Router()
 const { getWorkers, getWorkingDates, insertWorkingDate, getWorker } = require('../controller/workersController')
 const { requireWorkerAuth , requireAuth} = require('../middleware/check-auth')
+const checkFields = require('../middleware/check_fields')
 
 
 
 
-
-//workerId , fromDate query params
-router.get('/working-dates', requireAuth, getWorkingDates)
+//workerId  query params
+router.get('/working-dates', checkFields('query', ['workerId']), requireAuth, getWorkingDates)
 
 
 // date on body
-router.post('/working-date', requireWorkerAuth, insertWorkingDate)
+router.post('/working-date', checkFields('body', ['date', 'workerId']), requireWorkerAuth, insertWorkingDate)
 
 
 

@@ -12,6 +12,9 @@ const requireAuth = async (req, res, next) => {
 
     try {
         const { _id } = await jwt.verify(token, process.env.SECRET)
+
+        const user = await User.findOne({ _id })
+        req.worker_mode = user.role !== 'customer'
         req.user = _id
         next()
     }

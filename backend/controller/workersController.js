@@ -54,11 +54,7 @@ module.exports.getWorkingDates =async (req,res,next)=>{
     console.log('----------------getWorkingDates----------------');
     console.log('params', workerId, fromDate);
 
-    if(!workerId){
-        return res.status(400).json({
-            message:'you need to provide workerId'
-        })
-    }
+   
 
     if (!mongoose.Types.ObjectId.isValid(workerId)) {
         return res.status(404).json({
@@ -101,15 +97,9 @@ module.exports.getWorkingDates =async (req,res,next)=>{
 module.exports.insertWorkingDate = async (req, res, next) => {
     console.log('----------------insertWorkingDate----------------');
 
+    //these are required fields
     const { date, workerId } = req.body
     const workerAuthId = req.user
-
-    
-    if (!date || !workerId) {
-        return res.status(400).json({
-            message: 'you need to provide workerId and date'
-        })
-    }
 
     // TODO:  add top level worker!!!!
     if(workerAuthId !== workerId ){

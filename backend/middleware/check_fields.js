@@ -1,18 +1,20 @@
 
 
 
-module.exports = (required_fileds) => {
+module.exports = (paramNameType , required_fileds) => {
     if (!Array.isArray(required_fileds))
         throw 'must send an array !'
+
+        
     return (req, res, next) => {
 
-        console.log(req.body);
+        // console.log(req[paramNameType]);
 
         for (field of required_fileds.values()) {
-            if (!req.body[field]) {
+            if (!req[paramNameType][field]) {
                 console.log('required fileds failed');
                 return res.status(400).json({
-                    message: `parameter ${field} was not provided !`
+                    message: `parameter ${field} was not provided on request ${paramNameType}!`
                 })
             }
         }

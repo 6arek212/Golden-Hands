@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const required_fields = require('../middleware/check_fields')
+const checkFields = require('../middleware/check_fields')
 const { getAppointments,
     updateAppointment,
     deleteAppointment,
@@ -16,9 +17,9 @@ const { requireAuth, requireWorkerAuth } = require('../middleware/check-auth')
 
 
 
-router.get('/' , requireWorkerAuth , getAppointments)
+router.get('/', requireWorkerAuth, getAppointments)
 
-router.post('/', requireWorkerAuth, createAppointment)
+router.post('/', checkFields('body', [ 'worker', 'start_time', 'end_time', 'workingDate' ]), requireWorkerAuth, createAppointment)
 
 router.patch('/' , requireWorkerAuth, updateAppointment)
 
@@ -32,11 +33,12 @@ router.get('/user-appointment' , requireAuth , getUserAppointment)
 
 router.get('/user-appointments' , requireAuth , getUserAppointments)
 
-router.get('/available' , requireAuth, getAvailableAppointments)
+router.get('/available', checkFields('query', ['workerId']), requireAuth, getAvailableAppointments)
 
-router.post('/book', requireAuth, bookAppointment)
+//service , appointmentId
+router.post('/book', checkFields('body', ['service', 'appointmentId']), requireAuth, bookAppointment)
 
-router.post('/unbook', requireAuth, unbookAppointment)
+router.post('/unbook',checkFields('body', ['appointmentId']), requireAuth, unbookAppointment)
 
 module.exports = router
 

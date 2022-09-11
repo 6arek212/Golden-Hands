@@ -4,9 +4,9 @@ const { login, signup } = require('../controller/authController')
 
 
 
-router.post('/login', checkFields(['phone', 'password']), login)
+router.post('/login', checkFields('body',['phone', 'password']), login)
 
-router.post('/signup', checkFields(['firstName', 'lastName', 'phone', 'password']), signup)
+router.post('/signup', checkFields('body',['firstName', 'lastName', 'phone', 'password']), signup)
 
 router.post('/refresh_token', () => {
 
