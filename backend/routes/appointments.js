@@ -47,11 +47,11 @@ module.exports = router
  * An appointment item
  * @typedef {object} Appoitment
  * @property {string} _id - 
- * @property {string} customer - 
- * @property {string} worker.required - 
- * @property {string} workingDate.required - 
- * @property {string} start_time.required - 
- * @property {string} end_time.required - 
+ * @property {string} customer - the id of the customer
+ * @property {string} worker.required - the Id of the worker
+ * @property {string} workingDate.required - the Id of the working date !!
+ * @property {string} start_time.required - yyyy-MM-ddTHH:mm:ssT
+ * @property {string} end_time.required - yyyy-MM-ddTHH:mm:ssT
  * @property {string} service - 
  * @property {boolean} isActive - 
  */
@@ -60,10 +60,10 @@ module.exports = router
 /**
  * An appointment requrest item
  * @typedef {object} AppoitmentPayload
- * @property {string} worker.required - 
- * @property {string} workingDate.required - 
- * @property {string} start_time.required - 
- * @property {string} end_time.required - 
+ * @property {string} worker.required - the Id of the worker
+ * @property {string} workingDate.required - the Id of the working date !!
+ * @property {string} start_time.required - yyyy-MM-ddTHH:mm:ssT
+ * @property {string} end_time.required - yyyy-MM-ddTHH:mm:ssT
  */
 
 

@@ -40,7 +40,7 @@ module.exports = router
 
 
 
- 
+
 /**
  *  Schedule item
  * @typedef {object} Schedule
@@ -70,16 +70,41 @@ module.exports = router
  * 
  * @example response - 200 - success response - application/json
 {
-    "message": "fetch success",
+    "message": "fetch workers success",
     "workers": [
         {
-            "_id": "6317b78800670de89b87678c",
-            "firstName": "זיאד",
+            "_id": "6317b6ded417e4cbffde4da5",
+            "firstName": "טארק",
             "lastName": "חוסין",
-            "phone": "0525409948",
-            "role": "barber"
+            "phone": "0525145565",
+            "role": "barber",
+            "image": "6317b6ded417e4cbffde4da5.jpg"
         }
     ]
+    }
+*/
+
+
+
+/**
+ * GET /api/workers/{workerId}
+ * @summary get worker
+ * @tags Workers
+ * @param {string} workerId.query.required - 
+ * @return {object} 200 - success response - application/json
+ * @return {Message} 400 - Bad request response
+ * 
+ * @example response - 200 - success response - application/json
+{
+    "message": "fetch worker success",
+    "worker": {
+        "_id": "6317b6ded417e4cbffde4da5",
+        "firstName": "טארק",
+        "lastName": "חוסין",
+        "phone": "0525145565",
+        "role": "barber",
+        "image": "6317b6ded417e4cbffde4da5.jpg"
+    }
 }
 */
 
@@ -92,14 +117,32 @@ module.exports = router
  * @summary get working dates
  * @tags Working Date
  * @param {string} workerId.query.required - 
- * @param {string} fromDate.query.required - 
+ * @param {string} fromDate.query - yyyy-MM-ddTHH:mm:ssZ
  * @return {object} 200 - success response - application/json
  * @return {Message} 400 - Bad request response
  * @example response - 200 - success response - application/json
-{
-    "message": "insert success" 
+ * 
+ * {
+ "message": "fetch working dates success",
+    "workingDates": [
+        {
+            "_id": "631cc618d509d93a57af2d0f",
+            "worker": {
+                "_id": "6317b6ded417e4cbffde4da5",
+                "firstName": "טארק",
+                "lastName": "חוסין",
+                "phone": "0525145565",
+                "role": "barber",
+                "image": "6317b6ded417e4cbffde4da5.jpg"
+            },
+            "date": "2022-09-10T21:00:00.000Z",
+            "isActive": true
+        }
+    ]
 }
 */
+
+
 
 
 
@@ -107,12 +150,20 @@ module.exports = router
  * POST /api/workers/working-date
  * @summary insert a working date
  * @tags Working Date
- * @param {WorkingDatePayload} request.body.required - application/json
+ * @param {WorkingDatePayload} request.body.required - format yyyy-MM-ddTHH:mm:ssZ
  * @return {object} 201 - success response - application/json
  * @return {Message} 400 - Bad request response
  * @example response - 201 - success response - application/json
 {
-    "message": "insert success" 
-
+    "message": "insert working date success",
+    "workingDate": {
+        "worker": "6317b6ded417e4cbffde4da5",
+        "date": "2022-09-20T21:00:00.000Z",
+        "isActive": true,
+        "_id": "631d9b76538bd05972664620",
+        "createdAt": "2022-09-11T08:25:26.156Z",
+        "updatedAt": "2022-09-11T08:25:26.156Z",
+        "__v": 0
+    }
 }
 */
