@@ -296,7 +296,7 @@ exports.bookAppointment = async (req, res, next) => {
         }
 
         const appointment = await Appointment.findOneAndUpdate({ _id: appointmentId, customer: null },
-             { service, customer: customerId, isActive: true })
+             { service, customer: customerId, isActive: true }).populate('worker','firstName lastName phone role image')
         
         if(!appointment){
             return res.status(400).json({
@@ -323,15 +323,21 @@ exports.unbookAppointment = async (req, res, next) => {
         const { appointmentId } = req.body
         const userId = req.user
 
-        console.log(appointmentId);
         const appointment = await Appointment.findOne({ _id: appointmentId })
+
         if (!appointment) {
             return res.status(404).json({
                 message: 'appointment was not found !'
             })
         }
 
-        if (appointment.customer !== userId && !req.admin_mode) {
+        if(!appointment.customer){
+            return res.status(404).json({
+                message: 'appointment is not booked !'
+            })
+        }
+        
+        if (!String(appointment.customer) === userId&& !req.admin_mode) {
             return res.status(401).json({
                             message: 'you\'r not authorized to unbook this appointment !'
             })
