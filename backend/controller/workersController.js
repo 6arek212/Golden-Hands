@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 module.exports.getWorkers = async (req,res,next)=>{
     console.log('----------------getWorkers----------------');
 
+    try{
     const workers = await User
         .find()
         .where('role').ne('customer')
@@ -16,6 +17,10 @@ module.exports.getWorkers = async (req,res,next)=>{
         message: 'fetch workers success',
         workers
     })
+}
+catch(e){
+        next(e)
+}
 }
 
 
@@ -29,6 +34,7 @@ module.exports.getWorker =  async (req,res,next)=>{
         })
     }
 
+    try{
     const worker = await User
         .findOne({ _id: workerId })
         .where('role').ne('customer')
@@ -46,6 +52,10 @@ module.exports.getWorker =  async (req,res,next)=>{
         message: 'fetch worker success',
         worker
     })
+}
+catch(e){
+        next(e)
+}
 }
 
 
@@ -81,7 +91,7 @@ module.exports.getWorkingDates =async (req,res,next)=>{
         }
     }
 
-
+try{
     const workingDates = await query
         .sort({ date: 'asc' })
         .populate('worker', 'firstName lastName phone role image')
@@ -91,6 +101,9 @@ module.exports.getWorkingDates =async (req,res,next)=>{
             message: 'fetch working dates success',
             workingDates
         })
+    }catch(e){
+        next(e)
+    }
 }
 
 
@@ -123,6 +136,7 @@ module.exports.insertWorkingDate = async (req, res, next) => {
 
     console.log(workingDateUTC , workingDateUTCPlusDay);
 
+    try{
     const hasWorkingDate = await Schedule.findOne({ worker: workerId, date: date })
         .where('date').gte(workingDateUTC)
         .where('date').lt(workingDateUTCPlusDay)
@@ -139,4 +153,7 @@ module.exports.insertWorkingDate = async (req, res, next) => {
         message: 'insert working date success',
         workingDate
     })
+}catch(e){
+    next(e)
+}
 }

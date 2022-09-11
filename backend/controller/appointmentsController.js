@@ -81,7 +81,8 @@ exports.createAppointment = async (req, res, next) => {
 
     //required fields
     const { worker, start_time, end_time, workingDate } = req.body
-    
+
+    try{
     const current_date = new Date()
     const s_time = new Date(start_time)
     const e_time = new Date(end_time)
@@ -179,6 +180,10 @@ exports.createAppointment = async (req, res, next) => {
         appointment
     })
 }
+catch(e){
+        next(e)
+}
+}
 
 
 
@@ -189,6 +194,8 @@ exports.getAvailableAppointments = async (req ,res , next) => {
 
     console.log(workerId , workingDateId);
 
+
+    try{
     const query = Appointment.find({
         worker: workerId,
         customer : null
@@ -204,6 +211,10 @@ exports.getAvailableAppointments = async (req ,res , next) => {
         message:'fetched success',
         availableAppointments: appointments
     })
+}
+catch(e){
+    next(e)
+}
 }
 
 
@@ -257,6 +268,7 @@ exports.updateAppointment = async (req, res, next) => {
 exports.deleteAppointment = async (req, res, next) => {
     const { appointmentId } = req.params
 
+    try{
     const appointment = await Appointment.findOne({ _id: appointmentId })
 
     if (!appointment) {
@@ -275,6 +287,10 @@ exports.deleteAppointment = async (req, res, next) => {
     res.status(200).json({
         message: 'appointment deleted !'
     })
+    }
+    catch(e){
+            next(e)
+    }
 }
 
 
