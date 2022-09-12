@@ -3,7 +3,6 @@ const checkFields = require('../middleware/check_fields')
 const { sendAuthVerification, verifyAndSignup , verifyAndLogin , verifyPhone } = require('../controller/authController')
 
 
-
 router.post('/send-auth-verification', checkFields('body', ['phone']), sendAuthVerification)
 
 router.post('/signup-verify-phone', checkFields('body', ['firstName', 'lastName', 'phone', 'verifyId', 'code']), verifyAndSignup)

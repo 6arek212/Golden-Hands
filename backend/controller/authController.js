@@ -59,23 +59,11 @@ exports.sendAuthVerification = async (req, res, next) => {
 
 
 
-const verify = async (res, verifyId, code) => {
-    // check if the code match
-    const verify = await Verify.findOne({ _id: verifyId })
-    if(!verify){
-        return res.status(400).json({
-            message: 'No verification found !'
-        })
-    }
-
-    if(verify.code !== code){
-        return res.status(403).json({
-            message: 'Code not match !'
-        })
-    }
- 
-    // await Verify.updateOne({ _id: verifyId }, { isActive: false })
-}
+// const verify = async (res, verifyId, code) => {
+//     // check if the code match
+    
+//     // await Verify.updateOne({ _id: verifyId }, { isActive: false })
+// }
 
 
 
@@ -86,7 +74,19 @@ exports.verifyAndSignup = async (req, res, next) => {
 
     try {
        
-        verify(res, verifyId, code)
+        const verify = await Verify.findOne({ _id: verifyId })
+        if(!verify){
+            return res.status(400).json({
+                message: 'No verification found !'
+            })
+        }
+
+        if(verify.code !== code){
+            return res.status(403).json({
+                message: 'Code not match !'
+            })
+        }
+
       
         const user = await User.signup({ firstName, lastName, phone, password , adminMode})
 
@@ -115,14 +115,26 @@ exports.verifyAndSignup = async (req, res, next) => {
 
 
 exports.verifyAndLogin = async (req, res, next) => {
-    const { verifyId, code, adminMode } = req.body
+    const { phone, verifyId, code, adminMode } = req.body
 
     try {
 
         // check if the code match
-        verify(res, verifyId, code)
+        const verify = await Verify.findOne({ _id: verifyId })
+        if(!verify){
+            return res.status(404).json({
+                message: 'No verification found !'
+            })
+        }
 
-        let user = await User.login(phone, adminMode)
+        if(verify.code !== code){
+            return res.status(403).json({
+                message: 'Code not match !'
+            })
+        }
+
+        // let user = await User.login(phone, adminMode)
+        console.log('aaaaaaaaa');
 
         //create token
         const token = createToken(user._id)
@@ -157,7 +169,18 @@ exports.verifyPhone = async (req, res, next) => {
 
     try {
          // check if the code match
-         verify(res, verifyId, code)
+         const verify = await Verify.findOne({ _id: verifyId })
+        if(!verify){
+            return res.status(400).json({
+                message: 'No verification found !'
+            })
+        }
+
+        if(verify.code !== code){
+            return res.status(403).json({
+                message: 'Code not match !'
+            })
+        }
 
         res.status(200).json({
             message: 'phone verify success !'
