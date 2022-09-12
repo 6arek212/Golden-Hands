@@ -51,10 +51,10 @@ userSchema.statics.signup = async function ({ phone, firstName, lastName, passwo
 
 
 // statiac login method
-userSchema.statics.login = async function (phone, password , adminMode) {
+userSchema.statics.login = async function (phone, adminMode) {
 
     //validation
-    if (!phone || !password) {
+    if (!phone) {
         throw Error('All fileds must be filled')
     }
 
@@ -62,12 +62,6 @@ userSchema.statics.login = async function (phone, password , adminMode) {
     if (!user) {
         throw Error('Invalid credentials')
     }
-
-    const match = await bcrypt.compare(password, user.password)
-
-
-    if (!match)
-        throw Error('Invalid credentials')
 
     return user
 }
