@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    password: { type: String, required: true },
+    birthDate: { 
+        type: Date,
+        required: true
+    },
     role: { type: String, required: true, default: 'customer' },
     image: { type: String }
 }, {
@@ -24,10 +27,10 @@ const userSchema = new mongoose.Schema({
 
 
 // statiac signup method
-userSchema.statics.signup = async function ({ phone, firstName, lastName, password , adminMode}) {
+userSchema.statics.signup = async function ({ phone, firstName, lastName , birthDate, adminMode}) {
 
     //validation
-    if (!phone || !password || !firstName || !lastName) {
+    if (!phone  || !firstName || !lastName) {
         throw Error('All fileds must be filled')
     }
 
@@ -41,10 +44,7 @@ userSchema.statics.signup = async function ({ phone, firstName, lastName, passwo
         throw Error('Phone already in use')
     }
 
-    const salt = await bcrypt.genSalt(10)
-    const hash = await bcrypt.hash(password, salt)
-
-    const user = await this.create({ phone, password: hash, firstName, lastName })
+    const user = await this.create({ phone, firstName, lastName, birthDate })
 
     return user
 }

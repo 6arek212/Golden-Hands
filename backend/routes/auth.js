@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const checkFields = require('../middleware/check_fields')
-const { sendAuthVerification, verifyAndSignup , verifyAndLogin , verifyPhone } = require('../controller/authController')
+const { sendAuthVerification, verifyAndSignup , verifyAndLogin , verifyPhone ,refreshToken} = require('../controller/authController')
 
 
 router.post('/send-auth-verification', checkFields('body', ['phone']), sendAuthVerification)
@@ -12,8 +12,6 @@ router.post('/login-verify-phone', checkFields('body', ['phone', 'verifyId', 'co
 router.post('/verify-phone', checkFields('body', ['verifyId', 'code']), verifyPhone)
 
 
-router.post('/refresh_token', () => {
-
-})
+router.post('/refresh-token', refreshToken)
 
 module.exports = router

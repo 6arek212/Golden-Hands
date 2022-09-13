@@ -10,8 +10,16 @@ const client = require('twilio')(accountSid, authToken);
 const loginTries = 10
 
 
-const createToken = (_id) => {
-    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d' })
+const createToken = (_id , type = 'auth') => {
+    time = '1d' 
+    if(type == 'auth'){
+        time = '3d'
+    }
+    else if(type == 'refresh'){
+        time = '10d'
+    }
+
+    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: time })
 }
 
 
@@ -28,7 +36,8 @@ exports.sendAuthVerification = async (req, res, next) => {
             })
         }
 
-        var code = Math.floor(1000 + Math.random() * 9000)
+        // const code = Math.floor(1000 + Math.random() * 9000)
+        const code = "1234"
 
         const verify = await Verify.create({
             code: code,
@@ -88,23 +97,30 @@ exports.verifyAndSignup = async (req, res, next) => {
         }
 
       
-        const user = await User.signup({ firstName, lastName, phone, password , adminMode})
+        const user = await User.signup({ firstName, lastName, phone, birthDate, adminMode })
+
+        console.log(birthDate, user);
 
         //create token
-        const token = createToken(user._id)
-        const refresh_token = createToken(user._id)
+        const token = createToken(user._id , 'auth')
+        const refresh_token = createToken(user._id , 'refresh')
 
         res.status(201).json({
             message: 'signup sucess',
-            user: {
-                _id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                phone: user.phone , 
-                role: user.role,
-                adminMode
-            },
-            token
+            authData:{
+                user: {
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    phone: user.phone , 
+                    role: user.role,
+                    image: user.image,
+                    adminMode
+                },
+            token,
+            refresh_token,
+            expiresIn: 3 * 24 * 60 * 60
+            }
         })
     } catch (e) {
         next(e)
@@ -133,29 +149,32 @@ exports.verifyAndLogin = async (req, res, next) => {
             })
         }
 
-        // let user = await User.login(phone, adminMode)
-        console.log('aaaaaaaaa');
+        let user = await User.login(phone, adminMode)
+        // console.log('aaaaaaaaa');
 
         //create token
-        const token = createToken(user._id)
-        const refresh_token = createToken(user._id)
+        const token = createToken(user._id , 'auth')
+        const refresh_token = createToken(user._id , 'refresh')
 
 
         res.status(200).json({
             message: 'login sucess',
-            user: {
-                _id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                phone: user.phone , 
-                role: user.role,
-                adminMode
-            },
+            authData:{
+                user: {
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    phone: user.phone , 
+                    role: user.role,
+                    image: user.image,
+                    adminMode
+                },
             token,
             refresh_token,
             expiresIn: 3 * 24 * 60 * 60
+            }
         })
-        
+
     } catch (e) {
         next(e)
     }
@@ -191,4 +210,36 @@ exports.verifyPhone = async (req, res, next) => {
     }
 }
 
+
+
+
+
+
+
+
+exports.refreshToken = async (req, res, next) => {
+    const { refreshToken } = req.body
+    const { authorization } = req.headers
+
+    try {
+        console.log('----------------Refresh Token---------------');
+
+        if (!authorization) {
+            return res.status(403).json({ message: 'Authorization token required' })
+        }
+        const token = authorization.split(' ')[1]
+        const { _id } = await jwt.verify(refreshToken, process.env.SECRET)
+    
+//, {ignoreExpiration: true} 
+        const newtoken = createToken(_id , 'auth')
+
+         res.status(200).json({
+             message: 'token refreshed',
+             token: newtoken
+         })
+        
+    } catch (e) {
+        next(e)
+    }
+}
 

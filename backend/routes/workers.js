@@ -14,8 +14,8 @@ router.get('/working-dates', checkFields('query', ['workerId']), requireAuth, ge
 router.post('/working-date', checkFields('body', ['date', 'workerId']), requireWorkerAuth, insertWorkingDate)
 
 
-
-router.get('/', requireAuth, getWorkers)
+//public route 
+router.get('/', getWorkers)
 
 
 router.get('/:workerId', requireAuth, getWorker)
