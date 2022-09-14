@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    birthDate: { 
+    birthDate: {
         type: Date,
         required: true
     },
@@ -27,10 +27,10 @@ const userSchema = new mongoose.Schema({
 
 
 // statiac signup method
-userSchema.statics.signup = async function ({ phone, firstName, lastName , birthDate, adminMode}) {
+userSchema.statics.signup = async function ({ phone, firstName, lastName, birthDate, imagePath, adminMode }) {
 
     //validation
-    if (!phone  || !firstName || !lastName) {
+    if (!phone || !firstName || !lastName) {
         throw Error('All fileds must be filled')
     }
 
@@ -44,7 +44,7 @@ userSchema.statics.signup = async function ({ phone, firstName, lastName , birth
         throw Error('Phone already in use')
     }
 
-    const user = await this.create({ phone, firstName, lastName, birthDate })
+    const user = await this.create({ phone, firstName, lastName, birthDate, image: imagePath })
 
     return user
 }

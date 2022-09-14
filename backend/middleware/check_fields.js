@@ -5,7 +5,6 @@ module.exports = (paramNameType , required_fileds) => {
     if (!Array.isArray(required_fileds))
         throw 'must send an array !'
 
-        
     return (req, res, next) => {
 
         // console.log(req[paramNameType]);
