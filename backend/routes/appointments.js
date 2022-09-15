@@ -150,7 +150,7 @@ module.exports = router
 
 /**
  * Delete /api/appointments/{appointmentId}
- * @summary delete appointment
+ * @summary delete appointment , you can delete an appointment only if it's not booked
  * @tags Appointments
  * @param {string} appointmentId.path.required - 
  * @return {object} 200 - Success response
