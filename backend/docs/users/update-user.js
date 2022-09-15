@@ -1,27 +1,27 @@
+
+
 module.exports = {
     // method of operation
-    get: {
-        tags: ["Appointments CRUD"], // operation's tag.
-        description: "Get Appointment", // operation's desc.
-        operationId: "getAppointment", // unique operation id.
+    patch: {
+        tags: ["Users"], // operation's tag.
+        description: "Update User", // operation's desc.
+        operationId: "updateUser", // unique operation id.
         parameters: [
-
             {
-                name: "appointmentId", // name of param
+                name: "userId", // name of param
                 in: "param", // location of param
                 schema: {
                     type: "string"
                 },
-                description: "appointment Id", // short desc.
-                require: true
-            },
-
+                description: "user Id", // short desc.
+                required: true
+            }
         ], // expected params.
         // expected responses
         responses: {
             // response code
-            200: {
-                description: "Fetch Appointment",
+            201: {
+                description: "Update appointment ",
                 content: {
                     // content-type
                     "application/json": {
@@ -29,15 +29,15 @@ module.exports = {
 
                         "schema": {
                             "type": "object",
-                            
+
                             "properties": {
                                 "message": {
                                     type: "string",
                                     description: "message",
-                                    example: "fetch success",
+                                    example: "user updated",
                                 },
-                                "appointment": {
-                                    $ref: "#/components/schemas/Appointment"
+                                "user": {
+                                    $ref: "#/components/schemas/User"
                                 },
                             }
                         }
@@ -48,7 +48,7 @@ module.exports = {
             },
 
 
-            404: {
+            400: {
 
                 content: {
                     "application/json": {
@@ -57,11 +57,11 @@ module.exports = {
                             "properties": {
                                 "message": {
                                     type: "string",
-                                    description: "message", 
-                                    example: "Appointment was not found", 
+                                    description: "message",
+                                    example: "user was not found",
                                 }
                             },
-                          
+
                         }
                     }
                 }

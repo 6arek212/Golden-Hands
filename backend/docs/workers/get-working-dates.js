@@ -1,19 +1,30 @@
+
 module.exports = {
     // method of operation
     get: {
-        tags: ["Appointments CRUD"], // operation's tag.
-        description: "Get Appointment", // operation's desc.
-        operationId: "getAppointment", // unique operation id.
+        tags: ["Working Dates"], // operation's tag.
+        description: "Get Working Dates", // operation's desc.
+        operationId: "getWorkingDates", // unique operation id.
         parameters: [
 
             {
-                name: "appointmentId", // name of param
+                name: "workerId", // name of param
                 in: "param", // location of param
                 schema: {
                     type: "string"
                 },
-                description: "appointment Id", // short desc.
-                require: true
+                description: "worker Id", // short desc.
+                required: true
+            },
+
+            {
+                name: "fromDate", // name of param
+                in: "param", // location of param
+                schema: {
+                    type: "date"
+                },
+                description: "starting date", // short desc.
+                example: "2022-09-15 13:00:00",
             },
 
         ], // expected params.
@@ -21,35 +32,33 @@ module.exports = {
         responses: {
             // response code
             200: {
-                description: "Fetch Appointment",
+                description: "Appointments were obtained",
                 content: {
                     // content-type
                     "application/json": {
-
-
                         "schema": {
                             "type": "object",
-                            
+
                             "properties": {
                                 "message": {
                                     type: "string",
                                     description: "message",
                                     example: "fetch success",
                                 },
-                                "appointment": {
-                                    $ref: "#/components/schemas/Appointment"
+                                "workingDates": {
+                                    "type": "array",
+                                    "items": {
+                                        $ref: "#/components/schemas/WorkingDate"
+                                    },
                                 },
                             }
                         }
                     },
-
-
                 },
             },
 
 
-            404: {
-
+            400: {
                 content: {
                     "application/json": {
                         schema: {
@@ -57,11 +66,11 @@ module.exports = {
                             "properties": {
                                 "message": {
                                     type: "string",
-                                    description: "message", 
-                                    example: "Appointment was not found", 
+                                    description: "message",
+                                    example: "Bad request response",
                                 }
                             },
-                          
+
                         }
                     }
                 }

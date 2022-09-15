@@ -62,10 +62,12 @@ module.exports = {
                         example: "ASDFERGXCVSADF234ASCADSXC34TRFRGV", // example of an id
                     },
                     customer: {
+                        $ref: '#/components/schemas/User',
                         type: "User", // data-type
                         description: "Todo's title", // desc
                     },
                     worker: {
+                        $ref: '#/components/schemas/User',
                         type: "User", // data type
                         description: "The status of the todo", // desc
                         required: true
@@ -113,8 +115,8 @@ module.exports = {
                         example: "ASDFERGXCVSADF234ASCADSXC34TRFRGV", // example of an id
                     },
                     worker: {
-                        type: "User", // data type
-                        description: "The status of the todo", // desc
+                        $ref: '#/components/schemas/User',
+                        description: "the worker", // desc
                         required: true
                     },
                     date: {
@@ -133,14 +135,9 @@ module.exports = {
             },
 
             Message: {
-                type: "object",
-                properties: {
-                    message: {
-                        type: "string", 
-                        description: "message", 
-                        example: "fetch success", 
-                    }
-                },
+                type: "string",
+                description: "message", 
+                example: "fetch success", 
             },
             // error model
             Error: {
@@ -161,3 +158,6 @@ module.exports = {
         },
     },
 };
+
+
+

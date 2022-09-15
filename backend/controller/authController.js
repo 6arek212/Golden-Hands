@@ -99,7 +99,7 @@ exports.sendAuthVerification = async (req, res, next) => {
 
 
         res.status(201).json({
-            message: 'login verification sent',
+            message: 'verification sent',
             verifyId: verify._id
         })
 
@@ -256,18 +256,12 @@ exports.verifyPhone = async (req, res, next) => {
 
 exports.refreshToken = async (req, res, next) => {
     const { refreshToken } = req.body
-    const { authorization } = req.headers
 
     try {
         console.log('----------------Refresh Token---------------');
-
-        if (!authorization) {
-            return res.status(403).json({ message: 'Authorization token required' })
-        }
-        const token = authorization.split(' ')[1]
+        
         const { _id } = await jwt.verify(refreshToken, process.env.SECRET)
 
-        //, {ignoreExpiration: true} 
         const newtoken = createToken(_id, 'auth')
 
         res.status(200).json({
@@ -285,31 +279,3 @@ exports.refreshToken = async (req, res, next) => {
 
 
 
-
-exports.uploadFile = async (req, res, next) => {
-    try {
-        const { filename } = req.file
-        const userId = req.user
-
-        await User.updateOne({ _id: userId }, { image: filename })
-
-
-        const srcPath = path.join(__dirname, '..', 'temp', filename)
-        var source = fs.createReadStream(srcPath);
-        var dest = fs.createWriteStream(path.join(__dirname, '..', 'imgs', filename));
-
-        source.pipe(dest);
-        source.on('end', function () {
-            fs.unlinkSync(srcPath)
-            res.status(201).json({
-                message: 'image uploaded'
-            })
-        });
-        source.on('error', function (err) {
-            next(err)
-        });
-
-    } catch (e) {
-        next(e)
-    }
-}

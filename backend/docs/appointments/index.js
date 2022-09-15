@@ -6,15 +6,13 @@ const deleteAppointment = require('./delete-appointment');
 
 
 module.exports = {
-    paths: {
-        '/api/appointments': {
-            ...getAppointments,
-            ...createAppointment
-        },
-        '/api/appointments/{id}': {
-            ...getAppointment,
-            ...updateAppointment,
-            ...deleteAppointment
-        }
+    '/api/appointments': {
+        ...getAppointments,
+        ...createAppointment
+    },
+    '/api/appointments/{id}': {
+        ...getAppointment,
+        ...updateAppointment,
+        ...deleteAppointment
     }
 }

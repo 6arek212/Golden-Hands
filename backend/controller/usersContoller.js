@@ -2,36 +2,68 @@ const User = require('../models/user')
 
 
 
+
+exports.uploadUserImage = async (req, res, next) => {
+  try {
+    const { filename } = req.file
+    const userId = req.user
+
+    await User.updateOne({ _id: userId }, { image: filename })
+
+
+    const srcPath = path.join(__dirname, '..', 'temp', filename)
+    var source = fs.createReadStream(srcPath);
+    var dest = fs.createWriteStream(path.join(__dirname, '..', 'imgs', filename));
+
+    source.pipe(dest);
+    source.on('end', function () {
+      fs.unlinkSync(srcPath)
+      res.status(201).json({
+        message: 'image uploaded'
+      })
+    });
+    source.on('error', function (err) {
+      next(err)
+    });
+
+  } catch (e) {
+    next(e)
+  }
+}
+
+
+
+
 exports.getUsers = async (req, res, next) => {
-  const users = await User.find()  
+  const users = await User.find()
   res.status(200).json({
-    message:'fetch success',
+    message: 'fetch success',
     users
   })
 }
 
 
-exports.getUser= async (req, res, next) => {
-  const userId = req.user 
+exports.getUser = async (req, res, next) => {
+  const userId = req.user
 
   console.log(userId);
 
   const user = await User.findOne({ _id: userId }).select('firstName lastName phone role image')
-  if(!user){
+  if (!user) {
     return res.status(400).json({
       message: 'You need to signup'
     })
   }
 
   res.status(200).json({
-    message:'fetch success',
+    message: 'fetch success',
     user
   })
 }
 
 
 exports.updateUser = async (req, res, next) => {
-  const userId = req.user 
+  const userId = req.user
 
   console.log('--------------------', req.body);
 
@@ -40,7 +72,7 @@ exports.updateUser = async (req, res, next) => {
   console.log(user);
 
   res.status(200).json({
-    message:'update success',
+    message: 'update success',
     user
   })
 
@@ -48,7 +80,7 @@ exports.updateUser = async (req, res, next) => {
 
 
 exports.deleteUser = async (req, res, next) => {
- 
+
 }
 
 

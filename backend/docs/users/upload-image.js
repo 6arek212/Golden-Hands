@@ -1,44 +1,37 @@
 module.exports = {
     // method of operation
-    get: {
-        tags: ["Appointments CRUD"], // operation's tag.
-        description: "Get Appointment", // operation's desc.
-        operationId: "getAppointment", // unique operation id.
+    post: {
+        tags: ["Users"], // operation's tag.
+        description: "Upload user image", // operation's desc.
+        operationId: "uploadUserImage", // unique operation id.
         parameters: [
-
             {
-                name: "appointmentId", // name of param
-                in: "param", // location of param
+                in: "formData", // location of param
+                name: "image", // name of param
                 schema: {
-                    type: "string"
+                    type: "file"
                 },
-                description: "appointment Id", // short desc.
-                require: true
+                description: "The image to upload", // short desc.
+                required: true
             },
-
         ], // expected params.
         // expected responses
         responses: {
             // response code
-            200: {
-                description: "Fetch Appointment",
+            201: {
+                description: "Upload user image",
                 content: {
                     // content-type
                     "application/json": {
-
-
                         "schema": {
                             "type": "object",
-                            
+
                             "properties": {
                                 "message": {
                                     type: "string",
                                     description: "message",
-                                    example: "fetch success",
-                                },
-                                "appointment": {
-                                    $ref: "#/components/schemas/Appointment"
-                                },
+                                    example: "image uploaded",
+                                }
                             }
                         }
                     },
@@ -48,7 +41,7 @@ module.exports = {
             },
 
 
-            404: {
+            400: {
 
                 content: {
                     "application/json": {
@@ -57,11 +50,11 @@ module.exports = {
                             "properties": {
                                 "message": {
                                     type: "string",
-                                    description: "message", 
-                                    example: "Appointment was not found", 
+                                    description: "message",
+                                    example: "Bad request",
                                 }
                             },
-                          
+
                         }
                     }
                 }

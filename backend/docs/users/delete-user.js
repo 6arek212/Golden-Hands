@@ -1,18 +1,18 @@
 module.exports = {
   // method of operation
   delete: {
-    tags: ["Appointments CRUD"], // operation's tag.
-    description: "Delete Appointment", // operation's desc.
-    operationId: "deleteAppointment", // unique operation id.
+    tags: ["Users"], // operation's tag.
+    description: "Delete User", // operation's desc.
+    operationId: "deleteUser", // unique operation id.
     parameters: [
 
       {
-        name: "appointmentId", // name of param
+        name: "userId", // name of param
         in: "param", // location of param
         schema: {
           type: "string"
         },
-        description: "appointment Id", // short desc.
+        description: "user Id", // short desc.
         require: true
       },
 
@@ -21,7 +21,7 @@ module.exports = {
     responses: {
       // response code
       200: {
-        description: "Appointments were obtained",
+        description: "Delete User",
         content: {
           // content-type
           "application/json": {
@@ -32,7 +32,7 @@ module.exports = {
                 "message": {
                   type: "string",
                   description: "message",
-                  example: "Appointment deleted",
+                  example: "user deleted",
                 }
               },
             }
@@ -53,7 +53,7 @@ module.exports = {
                 "message": {
                   type: "string",
                   description: "message",
-                  example: "Appointment was not found",
+                  example: "user was not found",
                 }
               },
 

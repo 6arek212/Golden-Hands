@@ -1,19 +1,19 @@
 module.exports = {
     // method of operation
     get: {
-        tags: ["Appointments CRUD"], // operation's tag.
-        description: "Get Appointment", // operation's desc.
-        operationId: "getAppointment", // unique operation id.
+        tags: ["Workers"], // operation's tag.
+        description: "Get Worker", // operation's desc.
+        operationId: "getWorker", // unique operation id.
         parameters: [
 
             {
-                name: "appointmentId", // name of param
+                name: "workerId", // name of param
                 in: "param", // location of param
                 schema: {
                     type: "string"
                 },
-                description: "appointment Id", // short desc.
-                require: true
+                description: "worker Id", // short desc.
+                required: true
             },
 
         ], // expected params.
@@ -21,7 +21,7 @@ module.exports = {
         responses: {
             // response code
             200: {
-                description: "Fetch Appointment",
+                description: "Fetch Worker Data",
                 content: {
                     // content-type
                     "application/json": {
@@ -29,7 +29,7 @@ module.exports = {
 
                         "schema": {
                             "type": "object",
-                            
+
                             "properties": {
                                 "message": {
                                     type: "string",
@@ -37,7 +37,7 @@ module.exports = {
                                     example: "fetch success",
                                 },
                                 "appointment": {
-                                    $ref: "#/components/schemas/Appointment"
+                                    $ref: "#/components/schemas/User"
                                 },
                             }
                         }
@@ -57,11 +57,11 @@ module.exports = {
                             "properties": {
                                 "message": {
                                     type: "string",
-                                    description: "message", 
-                                    example: "Appointment was not found", 
+                                    description: "message",
+                                    example: "Worker was not found",
                                 }
                             },
-                          
+
                         }
                     }
                 }

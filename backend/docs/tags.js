@@ -1,5 +1,7 @@
 module.exports = {
     tags:{
-        name: "Appointments CRUD operations", // name of a tag
+        name: "Appointments CRUD", // name of a tag
+        name: "Workers", // name of a tag
+
     }
 }

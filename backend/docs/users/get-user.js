@@ -1,27 +1,26 @@
 module.exports = {
     // method of operation
     get: {
-        tags: ["Appointments CRUD"], // operation's tag.
-        description: "Get Appointment", // operation's desc.
-        operationId: "getAppointment", // unique operation id.
+        tags: ["Users"], // operation's tag.
+        description: "Get User", // operation's desc.
+        operationId: "getUser", // unique operation id.
         parameters: [
 
             {
-                name: "appointmentId", // name of param
+                name: "userId", // name of param
                 in: "param", // location of param
                 schema: {
                     type: "string"
                 },
-                description: "appointment Id", // short desc.
-                require: true
+                description: "user Id", // short desc.
+                required: true
             },
-
         ], // expected params.
         // expected responses
         responses: {
             // response code
             200: {
-                description: "Fetch Appointment",
+                description: "Fetch User",
                 content: {
                     // content-type
                     "application/json": {
@@ -29,15 +28,15 @@ module.exports = {
 
                         "schema": {
                             "type": "object",
-                            
+
                             "properties": {
                                 "message": {
                                     type: "string",
                                     description: "message",
                                     example: "fetch success",
                                 },
-                                "appointment": {
-                                    $ref: "#/components/schemas/Appointment"
+                                "user": {
+                                    $ref: "#/components/schemas/User"
                                 },
                             }
                         }
@@ -57,11 +56,11 @@ module.exports = {
                             "properties": {
                                 "message": {
                                     type: "string",
-                                    description: "message", 
-                                    example: "Appointment was not found", 
+                                    description: "message",
+                                    example: "User was not found",
                                 }
                             },
-                          
+
                         }
                     }
                 }

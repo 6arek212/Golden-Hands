@@ -3,13 +3,12 @@
 module.exports = {
   // method of operation
   post: {
-    tags: ["Appointments CRUD"], // operation's tag.
-    description: "Create Appointment", // operation's desc.
-    operationId: "createAppointment", // unique operation id.
+    tags: ["Working Dates"], // operation's tag.
+    description: "Create Working Dates", // operation's desc.
+    operationId: "createWorkingDates", // unique operation id.
     parameters: [
-
       {
-        name: "worker", // name of param
+        name: "workerId", // name of param
         in: "body", // location of param
         schema: {
           type: "string"
@@ -18,33 +17,12 @@ module.exports = {
         required: true
       },
       {
-        name: "workingDate", // name of param
+        name: "date", // name of param
         in: "body", // location of param
         schema: {
           type: "string"
         },
-        description: "Working Date identification number", // desc
-        example: "ASDFERGXCVSADF234ASCADSXC34TRFRGV",
-        required: true
-      },
-
-      {
-        name: "start_time", // name of param
-        in: "body", // location of param
-        schema: {
-          type: "date"
-        },
-        description: "start time for the appointment", // desc
-        example: "2022-09-15 13:00:00",
-        required: true
-      },
-      {
-        name: "end_time", // name of param
-        in: "body", // location of param
-        schema: {
-          type: "date"
-        },
-        description: "start time for the appointment", // desc
+        description: "the wroking date", // desc
         example: "2022-09-15 13:00:00",
         required: true
       },
@@ -54,7 +32,7 @@ module.exports = {
     responses: {
       // response code
       201: {
-        description: "create appointment ",
+        description: "create working date",
         content: {
           // content-type
           "application/json": {
@@ -67,10 +45,10 @@ module.exports = {
                 "message": {
                   type: "string",
                   description: "message",
-                  example: "appointment created",
+                  example: "insert working date success",
                 },
-                "appointment": {
-                  $ref: "#/components/schemas/Appointment"
+                "workingDate": {
+                  $ref: "#/components/schemas/WorkingDate"
                 },
               }
             }
@@ -91,7 +69,7 @@ module.exports = {
                 "message": {
                   type: "string",
                   description: "message",
-                  example: "appointments conflicting",
+                  example: "You have already added a working date in this date",
                 }
               },
 

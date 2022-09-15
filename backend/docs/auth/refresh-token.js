@@ -1,44 +1,43 @@
 module.exports = {
     // method of operation
-    get: {
-        tags: ["Appointments CRUD"], // operation's tag.
-        description: "Get Appointment", // operation's desc.
-        operationId: "getAppointment", // unique operation id.
+    post: {
+        tags: ["Auth"], // operation's tag.
+        description: "Refresh Token", // operation's desc.
+        operationId: "refresh Token", // unique operation id.
         parameters: [
-
             {
-                name: "appointmentId", // name of param
-                in: "param", // location of param
+                name: "refreshToken", // name of param
+                in: "body", // location of param
                 schema: {
                     type: "string"
                 },
-                description: "appointment Id", // short desc.
-                require: true
-            },
-
-        ], // expected params.
+                description: "Refresh Token", // short desc.
+                required: true
+            }
+        ],
         // expected responses
         responses: {
             // response code
             200: {
-                description: "Fetch Appointment",
+                description: "Refresh Token",
                 content: {
                     // content-type
                     "application/json": {
 
-
                         "schema": {
                             "type": "object",
-                            
+
                             "properties": {
-                                "message": {
+                                message: {
                                     type: "string",
                                     description: "message",
-                                    example: "fetch success",
+                                    example: "token refreshed",
                                 },
-                                "appointment": {
-                                    $ref: "#/components/schemas/Appointment"
-                                },
+                                token: {
+                                    type: "string",
+                                    description: "refresh token",
+                                    example: "SDFVGDFVBERVSDVCASCASCZXCSDFSDVSDFVSDVSDAVSDVSDVSDV",
+                                }
                             }
                         }
                     },
@@ -48,7 +47,7 @@ module.exports = {
             },
 
 
-            404: {
+            400: {
 
                 content: {
                     "application/json": {
@@ -57,11 +56,11 @@ module.exports = {
                             "properties": {
                                 "message": {
                                     type: "string",
-                                    description: "message", 
-                                    example: "Appointment was not found", 
+                                    description: "message",
+                                    example: "Bad Request",
                                 }
                             },
-                          
+
                         }
                     }
                 }
