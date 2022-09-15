@@ -19,9 +19,9 @@ const { requireAuth, requireWorkerAuth } = require('../middleware/check-auth')
 
 router.get('/', requireWorkerAuth, getAppointments)
 
-router.post('/', checkFields('body', [ 'worker', 'start_time', 'end_time', 'workingDate' ]), requireWorkerAuth, createAppointment)
+router.post('/', checkFields('body', ['worker', 'start_time', 'end_time', 'workingDate']), requireWorkerAuth, createAppointment)
 
-router.patch('/' , requireWorkerAuth, updateAppointment)
+router.patch('/:appointmentId', requireWorkerAuth, updateAppointment)
 
 router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
 
@@ -29,16 +29,16 @@ router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
 
 //customer routes
 
-router.get('/user-appointment' , requireAuth , getUserAppointment)
+router.get('/user-appointment', requireAuth, getUserAppointment)
 
-router.get('/user-appointments' , requireAuth , getUserAppointments)
+router.get('/user-appointments', requireAuth, getUserAppointments)
 
 router.get('/available', checkFields('query', ['workerId']), requireAuth, getAvailableAppointments)
 
 //service , appointmentId
 router.post('/book', checkFields('body', ['service', 'appointmentId']), requireAuth, bookAppointment)
 
-router.post('/unbook',checkFields('body', ['appointmentId']), requireAuth, unbookAppointment)
+router.post('/unbook', checkFields('body', ['appointmentId']), requireAuth, unbookAppointment)
 
 module.exports = router
 
@@ -153,15 +153,56 @@ module.exports = router
  * @summary delete appointment
  * @tags Appointments
  * @param {string} appointmentId.path.required - 
- * @return {object} 201 - Success response
+ * @return {object} 200 - Success response
  * @return {object} 400 - Bad request response
- * @example response - 201 - success response - application/json
+ * @example response - 200 - success response - application/json
  * {
  *   "message": "appointment deleted"
  * }
  * 
  * @example response - 400 - example error response
  * {
- *   "message": "appointment has been book ! , you must unbook first"
+ *   "message": "this appointment has already been booked, unbook it first"
+ * }
+ */
+
+
+
+
+
+/**
+ * Patch /api/appointments/{appointmentId}
+ * @summary update appointment , you can update an appointment only if it's not booked
+ * @tags Appointments
+ * @param {string} appointmentId.path.required - the appointment id
+ * @return {object} 200 - Success response
+ * @return {object} 400 - Bad request response
+ * @example response - 200 - success response - application/json
+ * {
+ *   "message": "appointment updated",
+ *  "appointment": 
+ *   {
+ *       "_id": "6317b9aea07dbb5aa25d6653",
+ *       "worker": {
+ *           "_id": "6317b78800670de89b87678c",
+ *           "firstName": "Ziad",
+ *           "lastName": "Husin",
+ *           "phone": "0525409948",
+ *           "role": "barber"
+ *       },
+ *       "start_time": "2022-09-08T09:00:00.000Z",
+ *       "end_time": "2022-09-08T09:30:00.000Z",
+ *       "isActive": false,
+ *       "createdAt": "2022-09-06T21:20:46.952Z",
+ *       "updatedAt": "2022-09-06T22:15:03.380Z",
+ *       "customer": null,
+ *       "service": null
+ *   
+ * }
+ * }
+ * 
+ * @example response - 400 - example error response
+ * {
+ *   "message": "this appointment has already been booked, unbook it first"
  * }
  */

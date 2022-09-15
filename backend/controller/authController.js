@@ -1,8 +1,8 @@
 const User = require('../models/user')
 const Verify = require('../models/verify')
 const jwt = require('jsonwebtoken')
-
-
+const fs = require('fs')
+const path = require('path')
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -121,11 +121,6 @@ exports.sendAuthVerification = async (req, res, next) => {
 exports.verifyAndSignup = async (req, res, next) => {
     const { verifyId, code, firstName, lastName, birthDate, phone, adminMode } = req.body
 
-    /////// TODO: UPLOAD IMAGE !!!!!!!!!!!!!!!!!!
-
-
-    // console.log(adminMode);
-
     try {
         // const verify = await Verify.findOne({ _id: verifyId })
         // if (!verify) {
@@ -140,11 +135,8 @@ exports.verifyAndSignup = async (req, res, next) => {
         //     })
         // }
 
-        console.log(req.file.filename, req.body);
+        const user = await User.signup({ firstName, lastName, phone, birthDate, adminMode })
 
-        const user = await User.signup({ firstName, lastName, phone, birthDate, imagePath: req.file?.filename, adminMode })
-
-        console.log(birthDate, user);
 
         //create token
         const token = createToken(user._id, 'auth')
@@ -288,3 +280,36 @@ exports.refreshToken = async (req, res, next) => {
     }
 }
 
+
+
+
+
+
+
+exports.uploadFile = async (req, res, next) => {
+    try {
+        const { filename } = req.file
+        const userId = req.user
+
+        await User.updateOne({ _id: userId }, { image: filename })
+
+
+        const srcPath = path.join(__dirname, '..', 'temp', filename)
+        var source = fs.createReadStream(srcPath);
+        var dest = fs.createWriteStream(path.join(__dirname, '..', 'imgs', filename));
+
+        source.pipe(dest);
+        source.on('end', function () {
+            fs.unlinkSync(srcPath)
+            res.status(201).json({
+                message: 'image uploaded'
+            })
+        });
+        source.on('error', function (err) {
+            next(err)
+        });
+
+    } catch (e) {
+        next(e)
+    }
+}
