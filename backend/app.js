@@ -2,9 +2,9 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const expressJSDocSwagger = require('express-jsdoc-swagger');
+const swaggerUI = require('swagger-ui-express');
 const path = require("path")
-
+const docs = require('./docs');
 
 
 const appointmentsRouter = require('./routes/appointments')
@@ -16,22 +16,6 @@ const workersRoutes = require('./routes/workers')
 const app = express()
 // moment.locale('Asia/Hebron')
 
-
-
-const options = {
-  info: {
-    version: '1.0.0',
-    title: 'Appointments Managing System',
-    license: {
-      name: 'By Tarik Husin',
-    },
-  },
-  filesPattern: './example.js',
-  baseDir: __dirname,
-  filesPattern: './**/*.js',
-};
-
-expressJSDocSwagger(app)(options);
 
 mongoose.connect(process.env.MONGO_URI,
   { useNewUrlParser: true, useUnifiedTopology: true })
@@ -62,12 +46,14 @@ const html = path.join(__dirname, 'imgs')
 app.use('/imgs', express.static(html));
 
 
-app.use('/api/appointments' , appointmentsRouter)
+
+
+app.use('/api/appointments', appointmentsRouter)
 app.use('/api/cities', citiesRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api', authRoutes)
 app.use('/api/workers', workersRoutes)
-
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(docs));
 
 
 

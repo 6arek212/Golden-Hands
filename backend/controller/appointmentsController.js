@@ -262,7 +262,7 @@ exports.updateAppointment = async (req, res, next) => {
         })
     }
 
-    if (!appointment.customer) {
+    if (!req.body.customer) {
         return res.status(404).json({
             message: 'this appointment has already been booked, unbook it first'
         })
@@ -294,11 +294,14 @@ exports.deleteAppointment = async (req, res, next) => {
             })
         }
 
-        if (appointment.customer) {
-            return res.status(404).json({
-                message: 'this appointment has already been booked, unbook it first'
-            })
-        }
+        // if (appointment.customer) {
+        //     return res.status(404).json({
+        //         message: 'this appointment has already been booked, unbook it first'
+        //     })
+        // }
+        
+
+        //TODO : SEND MESSAGE TO THE CUSTOMER , APPOINTMENT HAS BEEN cancelled
 
         await Appointment.deleteOne({ _id: appointmentId })
         res.status(200).json({

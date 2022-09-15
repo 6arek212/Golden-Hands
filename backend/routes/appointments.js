@@ -77,7 +77,6 @@ module.exports = router
 
 
 
-
 /**
  * GET /api/appointments
  * @summary Worker only path , For getting appointmnets
@@ -122,8 +121,6 @@ module.exports = router
  *   "message": "worker must have a non customer role"
  * }
  */
-
-
 
 
 
