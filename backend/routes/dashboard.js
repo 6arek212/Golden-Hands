@@ -1,8 +1,8 @@
 const router = require('express').Router()
-const checkFields = require('../middleware/check_fields')
 const { getStats } = require('../controller/dashboardController')
+const { requireWorkerAuth } = require('../middleware/check-auth')
 
-router.get('/stats',  getStats)
+router.get('/stats', requireWorkerAuth, getStats)
 
 
 module.exports = router

@@ -202,7 +202,9 @@ exports.getUserAppointment = async (req, res, next) => {
     console.log('--------------- getAppointment requrest ----------------------------');
     const user = req.user
     try {
-        const appointment = await Appointment.findOne({ customer: user }).populate('worker', 'firstName lastName phone role image')
+        const appointment = await Appointment.findOne({ customer: user })
+        .populate('customer', 'firstName lastName phone role image')
+        .populate('worker', 'firstName lastName phone role image')
 
         res.status(200).json({
             message: 'fetched appointment successfull',
@@ -219,7 +221,9 @@ exports.getUserAppointments = async (req, res, next) => {
 
     const user = req.user
     try {
-        const appointments = await Appointment.find({ customer: user }).populate('worker', 'firstName lastName phone role image').sort({ 'isActive': -1 })
+        const appointments = await Appointment.find({ customer: user })
+        .populate('customer', 'firstName lastName phone role image')
+        .populate('worker', 'firstName lastName phone role image').sort({ 'isActive': -1 })
 
         res.status(200).json({
             message: 'fetched appointment successfull',

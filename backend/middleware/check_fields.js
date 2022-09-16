@@ -11,7 +11,7 @@ module.exports = (paramNameType , required_fileds) => {
 
         for (field of required_fileds.values()) {
             if (!req[paramNameType][field]) {
-                console.log('required fileds failed');
+                console.log(`parameter ${field} was not provided on request ${paramNameType}!`);
                 return res.status(400).json({
                     message: `parameter ${field} was not provided on request ${paramNameType}!`
                 })
