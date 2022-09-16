@@ -300,24 +300,34 @@ exports.deleteAppointment = async (req, res, next) => {
 
 exports.bookAppointment = async (req, res, next) => {
     try {
-        const { service, appointmentId } = req.body
-        const customerId = req.user
+        const { service, appointmentId, userId: customerId } = req.body
+        const user = req.user
+
+        if (user !== customerId && !req.worker_mode) {
+            return res.status(403).json({
+                message: 'you\'r not authorized to book an appointment for another user'
+            })
+        }
+
 
         const hasAppointment = await Appointment.findOne({ customer: customerId })
 
         if (hasAppointment) {
             return res.status(400).json({
-                message: 'you already have an appointment !'
+                message: 'you already have an appointment',
+                errorCode: 1
             })
         }
 
         const appointment = await Appointment.findOneAndUpdate({ _id: appointmentId, customer: null },
-            { service, customer: customerId, isActive: true }).populate('worker', 'firstName lastName phone role image')
+            { service, customer: customerId, isActive: true }, { new: true, runValidators: true })
+            .populate('worker', 'firstName lastName phone role image')
+            .populate('customer', 'firstName lastName phone role image')
 
         if (!appointment) {
             return res.status(400).json({
-                message: 'appointment is already been booked !',
-                appointment
+                message: 'appointment has already been booked',
+                errorCode: 2
             })
         }
 
@@ -337,7 +347,8 @@ exports.bookAppointment = async (req, res, next) => {
 exports.unbookAppointment = async (req, res, next) => {
     try {
         const { appointmentId } = req.body
-        const userId = req.user
+        const user = req.user
+
 
         const appointment = await Appointment.findOne({ _id: appointmentId })
 
@@ -348,16 +359,18 @@ exports.unbookAppointment = async (req, res, next) => {
         }
 
         if (!appointment.customer) {
-            return res.status(404).json({
-                message: 'appointment is not booked !'
+            return res.status(400).json({
+                message: 'appointment is not booked !',
+                errorCode: 2
             })
         }
 
-        if (!String(appointment.customer) === userId && !req.admin_mode) {
-            return res.status(401).json({
-                message: 'you\'r not authorized to unbook this appointment !'
+        if (!String(appointment.customer) === user && !req.worker_mode) {
+            return res.status(403).json({
+                message: 'you\'r not authorized to unbook this appointment'
             })
         }
+
 
         await Appointment.updateOne({ _id: appointmentId }, { service: null, customer: null, isActive: false })
 

@@ -6,6 +6,7 @@ const appointments = require('./appointments');
 const workers = require('./workers')
 const users = require('./users')
 const auth = require('./auth')
+const dashboard = require('./dashboard')
 
 module.exports = {
     ...basicInfo,
@@ -16,6 +17,7 @@ module.exports = {
         ...appointments,
         ...workers,
         ...users,
-        ...auth
+        ...auth,
+        ...dashboard
     }
 };

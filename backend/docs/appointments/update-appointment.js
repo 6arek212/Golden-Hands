@@ -3,7 +3,7 @@
 module.exports = {
     // method of operation
     patch: {
-        tags: ["Appointments CRUD"], // operation's tag.
+        tags: ["Appointments"], // operation's tag.
         description: "Update Appointment", // operation's desc.
         operationId: "updateAppointment", // unique operation id.
         parameters: [

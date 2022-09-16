@@ -15,6 +15,12 @@ const requireAuth = async (req, res, next) => {
         const { _id } = await jwt.verify(token, process.env.SECRET)
 
         const user = await User.findOne({ _id })
+        if (!user) {
+            return res.status(401).json({
+                message: 'Request is not authorized'
+            })
+        }
+
         req.worker_mode = user.role !== 'customer'
         req.user = _id
         next()
@@ -40,11 +46,11 @@ const requireWorkerAuth = async (req, res, next) => {
 
     try {
         const { _id } = await jwt.verify(token, process.env.SECRET)
-        
+
         const worker = await User.findOne({ _id })
-        if(worker.role === 'customer'){
+        if (!worker || worker.role === 'customer') {
             return res.status(401).json({
-                message:'Request is not authorized'
+                message: 'Request is not authorized'
             })
         }
 

@@ -4,46 +4,45 @@ module.exports = {
   // method of operation
   post: {
     tags: ["Appointments"], // operation's tag.
-    description: "Create Appointment", // operation's desc.
-    operationId: "createAppointment", // unique operation id.
+    description: "Book Appointment", // operation's desc.
+    operationId: "bookAppointment", // unique operation id.
     parameters: [
-
       {
-        name: "worker", // name of param
+        name: "appointmentId", // name of param
         in: "body", // location of param
         schema: {
           type: "string"
         },
-        description: "worker Id", // short desc.
+        description: "appointment Id ", // short desc.
         required: true
       },
       {
-        name: "start_time", // name of param
+        name: "userId", // name of param
         in: "body", // location of param
         schema: {
-          type: "date"
+          type: "string"
         },
-        description: "start time for the appointment", // desc
-        example: "2022-09-15 13:00:00",
+        description: "user Id", // desc
+        example: "DFGERGERG354GDFB56BFGN",
         required: true
       },
       {
-        name: "end_time", // name of param
+        name: "service", // name of param
         in: "body", // location of param
         schema: {
-          type: "date"
+          type: "string"
         },
-        description: "start time for the appointment", // desc
-        example: "2022-09-15 13:00:00",
+        description: "service", // desc
+        example: "Hair Cut",
         required: true
       },
 
-    ], // expected params.
-    // expected responses
+    ], 
+
     responses: {
       // response code
       201: {
-        description: "create appointment ",
+        description: "book appointment ",
         content: {
           // content-type
           "application/json": {
@@ -56,7 +55,7 @@ module.exports = {
                 "message": {
                   type: "string",
                   description: "message",
-                  example: "appointment created",
+                  example: "appointment booked !",
                 },
                 "appointment": {
                   $ref: "#/components/schemas/Appointment"
@@ -80,7 +79,7 @@ module.exports = {
                 "message": {
                   type: "string",
                   description: "message",
-                  example: "appointments conflicting",
+                  example: "appointment has already been booked",
                 }
               },
 

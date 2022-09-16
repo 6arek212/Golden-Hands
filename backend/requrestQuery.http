@@ -1,12 +1,23 @@
 
 
 
+# get users
+GET http://localhost:4000/api/users HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
+
+
 
 
 # get working dates
 GET http://localhost:4000/api/workers/ HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
 
+
+###
+
+# get active appointments 
+GET http://localhost:4000/api/appointments?isActive=true HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
 
 
 
@@ -18,22 +29,65 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZ
 
 
 
+###
+
+GET http://localhost:4000/api/dashboard/stats HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
+
+
+
+
+###
+
+GET http://localhost:4000/api/appointments HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
+
+
+
+
 
 
 ###
 
 
 
-# get working dates
+# create appointment
 POST http://localhost:4000/api/appointments HTTP/1.1
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
 
 {
     "workingDate":"631cc623d509d93a57af2d19",
-    "start_time":"2022-09-20T19:00:00+0300" , 
-    "end_time":"2022-09-20T19:30:00+0300" , 
+    "start_time":"2022-09-22T19:00:00+0300" , 
+    "end_time":"2022-09-22T19:30:00+0300" , 
     "worker":"6317b6ded417e4cbffde4da5"    
 }
 
 
+###
+
+# book for another user appointment
+POST http://localhost:4000/api/appointments/book HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
+
+{
+    "service":"Hair Cut",
+    "appointmentId":"6324bb346d0defdaebb7022b" , 
+    "userId":"6324c3f4e28b229425d6c7c6" 
+}
+
+
+
+
+###
+
+
+# unbook for another user appointment
+POST http://localhost:4000/api/appointments/unbook HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
+
+{
+    "appointmentId": "6324bb346d0defdaebb7022b"
+}

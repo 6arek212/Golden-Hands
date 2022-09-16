@@ -12,6 +12,7 @@ const usersRoutes = require('./routes/users')
 const citiesRoutes = require('./routes/cities')
 const authRoutes = require('./routes/auth')
 const workersRoutes = require('./routes/workers')
+const dashboardRoutes = require('./routes/dashboard')
 
 const app = express()
 // moment.locale('Asia/Hebron')
@@ -53,6 +54,7 @@ app.use('/api/cities', citiesRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api', authRoutes)
 app.use('/api/workers', workersRoutes)
+app.use('/api/dashboard', dashboardRoutes)
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(docs));
 
 

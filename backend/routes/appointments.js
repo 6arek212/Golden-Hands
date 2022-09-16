@@ -27,6 +27,13 @@ router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
 
 
 
+
+router.post('/book', checkFields('body', ['service', 'appointmentId', 'userId']), requireAuth, bookAppointment)
+
+router.post('/unbook', checkFields('body', ['appointmentId']), requireAuth, unbookAppointment)
+
+
+
 //customer routes
 
 router.get('/user-appointment', requireAuth, getUserAppointment)
@@ -35,9 +42,6 @@ router.get('/user-appointments', requireAuth, getUserAppointments)
 
 router.get('/available', checkFields('query', ['workerId']), requireAuth, getAvailableAppointments)
 
-router.post('/book', checkFields('body', ['service', 'appointmentId']), requireAuth, bookAppointment)
-
-router.post('/unbook', checkFields('body', ['appointmentId']), requireAuth, unbookAppointment)
 
 module.exports = router
 

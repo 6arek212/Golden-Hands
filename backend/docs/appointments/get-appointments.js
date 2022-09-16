@@ -2,7 +2,7 @@
 module.exports = {
     // method of operation
     get: {
-        tags: ["Appointments CRUD"], // operation's tag.
+        tags: ["Appointments"], // operation's tag.
         description: "Get Appointments", // operation's desc.
         operationId: "getAppointments", // unique operation id.
         parameters: [
