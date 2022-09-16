@@ -18,17 +18,6 @@ module.exports = {
         required: true
       },
       {
-        name: "workingDate", // name of param
-        in: "body", // location of param
-        schema: {
-          type: "string"
-        },
-        description: "Working Date identification number", // desc
-        example: "ASDFERGXCVSADF234ASCADSXC34TRFRGV",
-        required: true
-      },
-
-      {
         name: "start_time", // name of param
         in: "body", // location of param
         schema: {
