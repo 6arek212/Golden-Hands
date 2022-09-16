@@ -64,29 +64,29 @@ module.exports = {
                     customer: {
                         $ref: '#/components/schemas/User',
                         type: "User", // data-type
-                        description: "Todo's title", // desc
+                        description: "Todo's title", 
                     },
                     worker: {
                         $ref: '#/components/schemas/User',
                         type: "User", // data type
-                        description: "The status of the todo", // desc
+                        description: "The status of the todo", 
                         required: true
                     },
                     workingDate: {
-                        type: "string",
-                        description: "Working Date identification number", // desc
-                        example: "ASDFERGXCVSADF234ASCADSXC34TRFRGV",
+                        type: "date",
+                        description: "The actuale Working Date", 
+                        example: "2022-09-15 00:00:00",
                         required: true
                     },
                     start_time: {
                         type: "date",
-                        description: "start time for the appointment", // desc
+                        description: "start time for the appointment", 
                         example: "2022-09-15 13:00:00",
                         required: true
                     },
                     end_time: {
                         type: "date",
-                        description: "end time for the appointment", // desc
+                        description: "end time for the appointment", 
                         example: "2022-09-15 14:00:00",
                         required: true
                     },
@@ -105,31 +105,19 @@ module.exports = {
                     },
                 },
             },
-            // Todo input model
             WorkingDate: {
                 type: "object", // data type
                 properties: {
-                    _id: {
-                        type: "string", // data-type
-                        description: "User identification number", // desc
-                        example: "ASDFERGXCVSADF234ASCADSXC34TRFRGV", // example of an id
-                    },
                     worker: {
                         $ref: '#/components/schemas/User',
                         description: "the worker", // desc
                         required: true
                     },
-                    date: {
+                    workingDate: {
                         type: "date",
                         description: "working date", // desc
                         example: "2022-09-15 13:00:00",
                         required: true
-                    },
-                    isActive: {
-                        type: "boolean",
-                        description: "indicates if the wprking date is active", // desc
-                        example: "true",
-                        default: 'true'
                     }
                 },
             },

@@ -10,10 +10,6 @@ const checkFields = require('../middleware/check_fields')
 router.get('/working-dates', checkFields('query', ['workerId']), requireAuth, getWorkingDates)
 
 
-// date on body
-router.post('/working-date', checkFields('body', ['date', 'workerId']), requireWorkerAuth, insertWorkingDate)
-
-
 //public route 
 router.get('/', getWorkers)
 

@@ -17,31 +17,3 @@ router.post('/refresh-token', checkFields('body', ['refreshToken']), refreshToke
 module.exports = router
 
 
-
-
-// checkFields('fields', ['firstName', 'lastName', 'phone', 'verifyId', 'code']),
-
-
-
-/**
- * POST /api/appointments/{appointmentId}
- * @summary Send sms auth verification
- * @tags Authentication
- * @param { string } request.required - phone number
- * @return {object} 200 - Success response
- * @return {object} 400 - Bad request response
- * 
- * @example body - application/json
- * {
- *   "message": "appointment deleted"
- * }
- * @example response - 200 - success response - application/json
- * {
- *   "message": "appointment deleted"
- * }
- * 
- * @example response - 400 - example error response
- * {
- *   "message": "this appointment has already been booked, unbook it first"
- * }
- */

@@ -1,6 +1,5 @@
 const User = require('../models/user')
 const Appointment = require('../models/appointment')
-const Schedule = require('../models/schedule')
 const mongoose = require('mongoose')
 
 
@@ -65,7 +64,6 @@ module.exports.getWorkingDates = async (req, res, next) => {
     console.log('params', workerId, fromDate);
 
 
-
     if (!mongoose.Types.ObjectId.isValid(workerId)) {
         return res.status(404).json({
             message: 'worker id is not valid'
@@ -73,7 +71,7 @@ module.exports.getWorkingDates = async (req, res, next) => {
     }
 
 
-    const query = Schedule.find({ worker: workerId })
+    const query = Appointment.find({ worker: workerId })
 
 
     if (fromDate) {
@@ -83,19 +81,19 @@ module.exports.getWorkingDates = async (req, res, next) => {
 
 
         if (from) {
-            query.where('date').gte(from)
+            query.where('workingDate').gte(from)
         }
 
         if (to) {
-            query.where('date').lte(to)
+            query.where('workingDate').lte(to)
         }
     }
 
     try {
         const workingDates = await query
             .sort({ date: 'asc' })
-            .populate('worker', 'firstName lastName phone role image')
-            .select('_id worker date isActive')
+            .distinct('workingDate')
+
 
         res.status(200).json({
             message: 'fetch working dates success',
@@ -107,53 +105,3 @@ module.exports.getWorkingDates = async (req, res, next) => {
 }
 
 
-module.exports.insertWorkingDate = async (req, res, next) => {
-    console.log('----------------insertWorkingDate----------------');
-
-    //these are required fields
-    const { date, workerId } = req.body
-    const workerAuthId = req.user
-
-    // TODO:  add top level worker!!!!
-    if (workerAuthId !== workerId) {
-        return res.status(403).json({
-            message: 'you cant add a working date for another worker, you must be a top level worker !'
-        })
-    }
-
-
-    console.log(date);
-
-    const workingDateUTC = new Date(date)
-    workingDateUTC.setHours(0)
-    workingDateUTC.setMinutes(0)
-    workingDateUTC.setSeconds(0)
-    workingDateUTC.setMilliseconds(0)
-
-    const workingDateUTCPlusDay = new Date(workingDateUTC)
-    workingDateUTCPlusDay.setDate(workingDateUTCPlusDay.getDate() + 1)
-
-
-    console.log(workingDateUTC, workingDateUTCPlusDay);
-
-    try {
-        const hasWorkingDate = await Schedule.findOne({ worker: workerId, date: date })
-            .where('date').gte(workingDateUTC)
-            .where('date').lt(workingDateUTCPlusDay)
-
-
-        if (hasWorkingDate) {
-            return res.status(400).json({
-                message: 'You have already added a working date in this date'
-            })
-        }
-
-        const workingDate = await Schedule.create({ worker: workerId, date: date }).populate('worker', 'firstName lastName phone role image')
-        res.status(200).json({
-            message: 'insert working date success',
-            workingDate
-        })
-    } catch (e) {
-        next(e)
-    }
-}

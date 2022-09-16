@@ -19,7 +19,7 @@ const { requireAuth, requireWorkerAuth } = require('../middleware/check-auth')
 
 router.get('/', requireWorkerAuth, getAppointments)
 
-router.post('/', checkFields('body', ['worker', 'start_time', 'end_time', 'workingDate']), requireWorkerAuth, createAppointment)
+router.post('/', checkFields('body', ['worker', 'start_time', 'end_time']), requireWorkerAuth, createAppointment)
 
 router.patch('/:appointmentId', requireWorkerAuth, updateAppointment)
 

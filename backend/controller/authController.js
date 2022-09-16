@@ -1,8 +1,7 @@
 const User = require('../models/user')
 const Verify = require('../models/verify')
 const jwt = require('jsonwebtoken')
-const fs = require('fs')
-const path = require('path')
+
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -66,11 +65,19 @@ const createToken = (_id, type = 'auth') => {
 
 
 // TODO: Adjust for loginin with admin / customer 
-
+/// ADD LOGIN AUTH AND PREVENT IF NOT EXISTS
 exports.sendAuthVerification = async (req, res, next) => {
-    const { phone, adminMode } = req.body
+    const { phone, isLogin, adminMode } = req.body
 
     try {
+        const user = await User.findOne({ phone: phone})
+        if(!user && isLogin){
+            return res.status(404).json({
+                message: "user with this number was not found !"
+            })
+        }
+
+
         const verifiesCount = await Verify.count({ phone: phone, forAuth: true })
         if (verifiesCount > loginTries) {
             return res.status(403).json({
@@ -259,7 +266,7 @@ exports.refreshToken = async (req, res, next) => {
 
     try {
         console.log('----------------Refresh Token---------------');
-        
+
         const { _id } = await jwt.verify(refreshToken, process.env.SECRET)
 
         const newtoken = createToken(_id, 'auth')

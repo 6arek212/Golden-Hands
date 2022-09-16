@@ -1,5 +1,6 @@
 const User = require('../models/user')
-
+const fs = require('fs')
+const path = require('path')
 
 
 
@@ -7,6 +8,7 @@ exports.uploadUserImage = async (req, res, next) => {
   try {
     const { filename } = req.file
     const userId = req.user
+    console.log(req.file, userId);
 
     await User.updateOne({ _id: userId }, { image: filename })
 
@@ -19,7 +21,8 @@ exports.uploadUserImage = async (req, res, next) => {
     source.on('end', function () {
       fs.unlinkSync(srcPath)
       res.status(201).json({
-        message: 'image uploaded'
+        message: 'image uploaded',
+        filename: filename
       })
     });
     source.on('error', function (err) {

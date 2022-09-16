@@ -1,5 +1,4 @@
 const Appointment = require('../models/appointment')
-const Schedule = require('../models/schedule')
 const User = require('../models/user')
 const mongoose = require('mongoose')
 
@@ -76,16 +75,18 @@ exports.getAppointments = async (req, res, next) => {
 
 
 
-// only barbers role can use this !!
 exports.createAppointment = async (req, res, next) => {
 
     //required fields
-    const { worker, start_time, end_time, workingDate } = req.body
+    const { worker, start_time, end_time } = req.body
+
 
     try {
         const current_date = new Date()
         const s_time = new Date(start_time)
         const e_time = new Date(end_time)
+        const date = new Date(s_time.toDateString())
+
 
         // check if the worker is valid
 
@@ -135,26 +136,6 @@ exports.createAppointment = async (req, res, next) => {
         }
 
 
-
-        //check working date
-        const workingDateData = await Schedule.findOne({ _id: workingDate })
-
-        if (workingDateData.date > s_time) {
-            return res.status(400).json({
-                message: 'start_time must be bigger than the working date'
-            })
-        }
-
-        workingDateData.date.setDate(workingDateData.date.getDate() + 1)
-
-        if (workingDateData.date <= e_time) {
-            return res.status(400).json({
-                message: 'end_time must be in the current working date interval between 00:00 to 23:59'
-            })
-        }
-
-
-
         //check if there is an intersection with another appointment 
         const conflictingAppointments = await Appointment.findOne()
             .where('worker').equals(worker)
@@ -167,12 +148,11 @@ exports.createAppointment = async (req, res, next) => {
             })
         }
 
-
         const appointment = await Appointment.create({
             worker: worker,
             start_time: start_time,
             end_time: end_time,
-            workingDate: workingDate
+            workingDate: date
         })
 
         res.status(201).json({
@@ -189,10 +169,10 @@ exports.createAppointment = async (req, res, next) => {
 
 
 exports.getAvailableAppointments = async (req, res, next) => {
-    //required fields
-    const { workerId, workingDateId } = req.query
+    const { workerId, workingDate } = req.query
 
-    console.log(workerId, workingDateId);
+    console.log(workerId, workingDate);
+    const date = new Date(workingDate)
 
 
     try {
@@ -201,8 +181,8 @@ exports.getAvailableAppointments = async (req, res, next) => {
             customer: null
         })
 
-        if (workingDateId) {
-            query.where('workingDate').equals(workingDateId)
+        if (workingDate) {
+            query.where('workingDate').equals(date)
         }
 
         const appointments = await query.populate('worker', 'firstName lastName phone role image')
@@ -272,7 +252,7 @@ exports.updateAppointment = async (req, res, next) => {
     const updatedAppointment = await Appointment
         .findOneAndUpdate({ _id: appointmentId }, { ...req.body }, { new: true, runValidators: true })
         .populate('worker', 'firstName lastName phone role image')
-        
+
     res.status(200).json({
         message: 'appointment updated !',
         appointment: updatedAppointment
@@ -299,7 +279,7 @@ exports.deleteAppointment = async (req, res, next) => {
         //         message: 'this appointment has already been booked, unbook it first'
         //     })
         // }
-        
+
 
         //TODO : SEND MESSAGE TO THE CUSTOMER , APPOINTMENT HAS BEEN cancelled
 
