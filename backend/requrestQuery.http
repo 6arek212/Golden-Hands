@@ -14,9 +14,9 @@ GET http://localhost:4000/api/users/6324c3f4e28b229425d6c7c6 HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
 
 
+###
 
-
-# get working dates
+# get workers
 GET http://localhost:4000/api/workers/ HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
 
@@ -32,12 +32,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZ
 
 ###
 
+
+# get working date 
 GET http://localhost:4000/api/workers/working-dates?workerId=6317b6ded417e4cbffde4da5 HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
 
 
 
 ###
+
+
 
 GET http://localhost:4000/api/dashboard/stats HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
