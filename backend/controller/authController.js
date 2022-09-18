@@ -67,13 +67,29 @@ const createToken = (_id, type = 'auth') => {
 // TODO: Adjust for loginin with admin / customer 
 /// ADD LOGIN AUTH AND PREVENT IF NOT EXISTS
 exports.sendAuthVerification = async (req, res, next) => {
-    const { phone, isLogin, adminMode } = req.body
+    const { phone, isLogin, isSignup, adminMode } = req.body
+
+    console.log(isLogin);
 
     try {
-        const user = await User.findOne({ phone: phone})
-        if(!user && isLogin){
+        const user = await User.findOne({ phone: phone })
+        if (!user && isLogin) {
             return res.status(404).json({
-                message: "user with this number was not found !"
+                message: "user with this number was not found"
+            })
+        }
+
+
+        if (user && isSignup) {
+            return res.status(400).json({
+                message: "user with this number already exists"
+            })
+        }
+
+
+        if(!isLogin && !isSignup && !req.user){
+            return res.status(403).json({
+                message: "your not authorized"
             })
         }
 

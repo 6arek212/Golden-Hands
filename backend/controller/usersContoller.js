@@ -47,11 +47,18 @@ exports.getUsers = async (req, res, next) => {
 
 
 exports.getUser = async (req, res, next) => {
-  const userId = req.user
+  const userIdFromAuth = req.user
+  const { userId: userIdFromParam } = req.params
 
-  console.log(userId);
 
-  const user = await User.findOne({ _id: userId }).select('firstName lastName phone role image')
+  if (userIdFromAuth !== userIdFromParam && !req.worker_mode) {
+    return res.status(403).json({
+      message: 'you are not authorized to make this call'
+    })
+  }
+
+
+  const user = await User.findOne({ _id: userIdFromParam }).select('firstName lastName phone role image')
   if (!user) {
     return res.status(400).json({
       message: 'You need to signup'

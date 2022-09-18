@@ -1,9 +1,10 @@
 const router = require('express').Router()
 const checkFields = require('../middleware/check_fields')
+const { attachUserInfo } = require('../middleware/check-auth')
 const { sendAuthVerification, verifyAndSignup, verifyAndLogin, verifyPhone, refreshToken, uploadFile } = require('../controller/authController')
 
 
-router.post('/send-auth-verification', checkFields('body', ['phone']), sendAuthVerification)
+router.post('/send-auth-verification', attachUserInfo, checkFields('body', ['phone']), sendAuthVerification)
 
 router.post('/signup-verify-phone', checkFields('body', ['firstName', 'lastName', 'birthDate', 'phone', 'verifyId', 'code']), verifyAndSignup)
 

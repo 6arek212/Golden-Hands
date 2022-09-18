@@ -33,6 +33,24 @@ const requireAuth = async (req, res, next) => {
 
 
 
+const attachUserInfo = async (req, res, next) => {
+    const { authorization } = req.headers
+    if (!authorization) {
+        return next()
+    }
+
+    const token = authorization.split(' ')[1]
+
+    try {
+        const { _id } = await jwt.verify(token, process.env.SECRET)
+        req.user = _id
+        next()
+    }
+    catch (error) {
+        next()
+    }
+}
+
 
 
 const requireWorkerAuth = async (req, res, next) => {
@@ -66,4 +84,4 @@ const requireWorkerAuth = async (req, res, next) => {
 
 
 
-module.exports = { requireAuth, requireWorkerAuth }
+module.exports = { requireAuth, requireWorkerAuth , attachUserInfo }
