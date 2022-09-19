@@ -91,7 +91,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZ
 
 {
     "service":"Hair Cut",
-    "appointmentId":"6328b6686afb3f70945df778" , 
+    "appointmentId":"6328b9272c6cade911e1f7e3" , 
     "userId":"6324c3f4e28b229425d6c7c6" 
     //"userId":"6317b6ded417e4cbffde4da5"
 }
@@ -107,7 +107,7 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjM2MTI0ODEsImV4cCI6MTY2Mzg3MTY4MX0.MwoTlxjOJ6Or7IiwEKPo9yPUE8j-mD22ojPPJuzGlYs
 
 {
-    "appointmentId": "63289a59edb5987a5116ba9b"
+    "appointmentId": "6328b9272c6cade911e1f7e3"
 }
 
 
@@ -122,6 +122,6 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjM2MTI0ODEsImV4cCI6MTY2Mzg3MTY4MX0.MwoTlxjOJ6Or7IiwEKPo9yPUE8j-mD22ojPPJuzGlYs
 
 {
-    "appointmentId": "6328b6686afb3f70945df778",
-    "status": "done"
+    "appointmentId": "6328b9272c6cade911e1f7e3",
+    "status": "free"
 }
