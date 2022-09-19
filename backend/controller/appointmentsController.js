@@ -313,7 +313,9 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             { _id: appointmentId, worker: user },
             { ...updateOps },
             { new: true })
-
+            .populate('worker', 'firstName lastName phone role image')
+            .populate('customer', 'firstName lastName phone role image')
+            
         if (!updatedAppointment) {
             return res.status(404).json({
                 message: 'appointment was not found',
@@ -371,7 +373,6 @@ exports.bookAppointment = async (req, res, next) => {
                 errorCode: 2
             })
         }
-        // }
 
 
         const appointment = await Appointment.findOneAndUpdate(
