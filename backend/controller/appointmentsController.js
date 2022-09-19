@@ -294,8 +294,9 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             })
         }
 
+        console.log();
 
-        if ((status === 'free' || status === 'hold') && !appointment.customer) {
+        if ((status === 'free' || status === 'hold') && appointment.customer) {
             return res.status(400).json({
                 message: 'the appointment is booked, You can change the status to done , in-progress , didnt-come , canceled'
             })
@@ -315,7 +316,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             { new: true })
             .populate('worker', 'firstName lastName phone role image')
             .populate('customer', 'firstName lastName phone role image')
-            
+
         if (!updatedAppointment) {
             return res.status(404).json({
                 message: 'appointment was not found',
