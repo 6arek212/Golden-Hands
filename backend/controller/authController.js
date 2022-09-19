@@ -87,7 +87,7 @@ exports.sendAuthVerification = async (req, res, next) => {
         }
 
 
-        if(!isLogin && !isSignup && !req.user){
+        if (!isLogin && !isSignup && !req.user) {
             return res.status(403).json({
                 message: "your not authorized"
             })
@@ -133,11 +133,6 @@ exports.sendAuthVerification = async (req, res, next) => {
 
 
 
-// const verify = async (res, verifyId, code) => {
-//     // check if the code match
-
-//     // await Verify.updateOne({ _id: verifyId }, { isActive: false })
-// }
 
 
 
@@ -145,20 +140,30 @@ exports.verifyAndSignup = async (req, res, next) => {
     const { verifyId, code, firstName, lastName, birthDate, phone, adminMode } = req.body
 
     try {
-        // const verify = await Verify.findOne({ _id: verifyId })
-        // if (!verify) {
-        //     return res.status(400).json({
-        //         message: 'No verification found !'
-        //     })
-        // }
+        let user = await User.findOne({ phone: phone })
 
-        // if (verify.code !== code) {
-        //     return res.status(403).json({
-        //         message: 'Code not match !'
-        //     })
-        // }
 
-        const user = await User.signup({ firstName, lastName, phone, birthDate, adminMode })
+        if (user) {
+            return res.status(400).json({
+                message: "user with this number already exists"
+            })
+        }
+
+
+        const verify = await Verify.findOne({ _id: verifyId })
+        if (!verify) {
+            return res.status(404).json({
+                message: 'No verification found !'
+            })
+        }
+
+        if (verify.code !== code) {
+            return res.status(403).json({
+                message: 'Code not match !'
+            })
+        }
+
+        user = await User.signup({ firstName, lastName, phone, birthDate, adminMode })
 
 
         //create token
@@ -243,34 +248,6 @@ exports.verifyAndLogin = async (req, res, next) => {
 
 
 
-exports.verifyPhone = async (req, res, next) => {
-    const { verifyId, code } = req.body
-
-    try {
-        // check if the code match
-        const verify = await Verify.findOne({ _id: verifyId })
-        if (!verify) {
-            return res.status(400).json({
-                message: 'No verification found !'
-            })
-        }
-
-        if (verify.code !== code) {
-            return res.status(403).json({
-                message: 'Code not match !'
-            })
-        }
-
-        res.status(200).json({
-            message: 'phone verify success !'
-        })
-
-    } catch (e) {
-        next(e)
-    }
-}
-
-
 
 
 
@@ -302,3 +279,51 @@ exports.refreshToken = async (req, res, next) => {
 
 
 
+
+
+
+
+exports.verifyAndUpdatePhone = async (req, res, next) => {
+    const { phone, verifyId, code, userId } = req.body
+    const userIdAuth = req.user
+
+    try {
+        let user = await User.findOne({ phone: phone })
+
+        if (user) {
+            return res.status(400).json({
+                message: "user with this number already exists"
+            })
+        }
+
+        if (userIdAuth !== userId && !req.worker_mode) {
+            return res.status(403).json({
+                message: "Your not allowed to do that"
+            })
+        }
+
+        // check if the code match
+        const verify = await Verify.findOne({ _id: verifyId })
+        if (!verify) {
+            return res.status(404).json({
+                message: 'No verification found'
+            })
+        }
+
+        if (verify.code !== code) {
+            return res.status(403).json({
+                message: 'Code not match'
+            })
+        }
+
+        user = await User.findOneAndUpdate({ _id: userId }, { phone: phone }, { runValidators: true, returnOriginal: false })
+
+        res.status(200).json({
+            message: 'phone updated successfully',
+            user
+        })
+
+    } catch (e) {
+        next(e)
+    }
+}

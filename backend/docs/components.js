@@ -64,29 +64,29 @@ module.exports = {
                     customer: {
                         $ref: '#/components/schemas/User',
                         type: "User", // data-type
-                        description: "Todo's title", 
+                        description: "Todo's title",
                     },
                     worker: {
                         $ref: '#/components/schemas/User',
                         type: "User", // data type
-                        description: "The status of the todo", 
+                        description: "The status of the todo",
                         required: true
                     },
                     workingDate: {
                         type: "date",
-                        description: "The actuale Working Date", 
+                        description: "The actuale Working Date",
                         example: "2022-09-15 00:00:00",
                         required: true
                     },
                     start_time: {
                         type: "date",
-                        description: "start time for the appointment", 
+                        description: "start time for the appointment",
                         example: "2022-09-15 13:00:00",
                         required: true
                     },
                     end_time: {
                         type: "date",
-                        description: "end time for the appointment", 
+                        description: "end time for the appointment",
                         example: "2022-09-15 14:00:00",
                         required: true
                     },
@@ -97,12 +97,21 @@ module.exports = {
                         example: "Hair cut",
                     },
 
-                    isActive: {
-                        type: "boolean",
-                        description: "indicates if the appointment is active", // desc
-                        example: "true",
-                        default: 'true'
+                    status: {
+                        type: "string",
+                        description: "indicates the appointment status", // desc
+                        example: "'done', 'in-progress', 'didnt-come', 'free'",
+                        default: 'free'
                     },
+
+                    hold: {
+                        type: "boolean",
+                        description: "indicates if the appointment is in hold", // desc
+                        example: "true",
+                        default: 'false'
+                    }
+
+
                 },
             },
             WorkingDate: {
@@ -124,8 +133,8 @@ module.exports = {
 
             Message: {
                 type: "string",
-                description: "message", 
-                example: "fetch success", 
+                description: "message",
+                example: "fetch success",
             },
             // error model
             Error: {

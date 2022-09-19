@@ -61,7 +61,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZ
 
 ###
 
+# delete appointments
+DELETE  http://localhost:4000/api/appointments HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
 
+
+
+###
 
 # create appointment
 POST http://localhost:4000/api/appointments HTTP/1.1
@@ -70,8 +76,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZ
 
 {
     "workingDate":"631cc623d509d93a57af2d19",
-    "start_time":"2022-09-22T19:00:00+0300" , 
-    "end_time":"2022-09-22T19:30:00+0300" , 
+    "start_time":"2022-09-22T10:00:00+0300" , 
+    "end_time":"2022-09-22T11:30:00+0300" , 
     "worker":"6317b6ded417e4cbffde4da5"    
 }
 
@@ -85,12 +91,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZ
 
 {
     "service":"Hair Cut",
-    "appointmentId":"6324bb346d0defdaebb7022b" , 
+    "appointmentId":"63289aa1edb5987a5116baa5" , 
     "userId":"6324c3f4e28b229425d6c7c6" 
+    //"userId":"6317b6ded417e4cbffde4da5"
 }
-
-
-
+//app1 63289a59edb5987a5116ba9b
+//app3 63289aa1edb5987a5116baa5
 
 ###
 
@@ -101,5 +107,5 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjMzNDg4MTYsImV4cCI6MTY2MzYwODAxNn0.F3Q-NfGlW0JPSusOty9bIu2CnfqShzdO8DY-7XN0s7g
 
 {
-    "appointmentId": "6324bb346d0defdaebb7022b"
+    "appointmentId": "63289a59edb5987a5116ba9b"
 }

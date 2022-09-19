@@ -37,8 +37,17 @@ module.exports = {
         example: "2022-09-15 13:00:00",
         required: true
       },
+      {
+        name: "hold", // name of param
+        in: "body", // location of param
+        schema: {
+          type: "bool"
+        },
+        description: "make a holded appointment , preventing from beeing booked until the worker allows it", 
+        example: 'true'
+      }
 
-    ], // expected params.
+    ], 
     // expected responses
     responses: {
       // response code

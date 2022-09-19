@@ -1,25 +1,33 @@
 const mongoose = require('mongoose')
-const bcrypt = require("bcrypt")
 
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: true
+        required: true,
+        match: /^[a-zA-Z\u0590-\u05fe\u0621-\u064A]+( [a-zA-Z\u0590-\u05fe\u0621-\u064A]+)*$/,
+        תminlength: 2,
+        maxlength: 24
     },
     lastName: {
         type: String,
-        required: true
+        required: true,
+        match: /^[a-zA-Z\u0590-\u05fe\u0621-\u064A]+( [a-zA-Z\u0590-\u05fe\u0621-\u064A]+)*$/,
+        תminlength: 2,
+        maxlength: 24
     },
     phone: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: /^[0-9]+$/,
+        תminlength: 2,
+        maxlength: 24
     },
     birthDate: {
         type: Date,
         required: true
     },
-    role: { type: String, required: true, default: 'customer' },
+    role: { type: String, required: true, default: 'customer', enum: ['barber', 'customer'] },
     image: { type: String }
 }, {
     timestamps: true

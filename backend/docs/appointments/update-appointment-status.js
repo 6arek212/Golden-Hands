@@ -4,8 +4,8 @@ module.exports = {
     // method of operation
     patch: {
         tags: ["Appointments"], // operation's tag.
-        description: "Update Appointment", // operation's desc.
-        operationId: "updateAppointment", // unique operation id.
+        description: "Update Appointment Status", // operation's desc.
+        operationId: "updateAppointmentStatus", // unique operation id.
         parameters: [
             {
                 name: "appointmentId", // name of param
@@ -15,14 +15,25 @@ module.exports = {
                     description: "appointment Id", // short desc.
                 },
                 required: true
+            },
+
+            {
+                name: "status", // name of param
+                in: "param", // location of param
+                schema: {
+                    type: "string",
+                    description: "the appointment status , if its free then the appointment must be unbooked first", // short desc.
+                },
+                required: true,
+                example: "'done', 'in-progress', 'didnt-come', 'canceled' , 'free'"
             }
 
         ], // expected params.
         // expected responses
         responses: {
             // response code
-            201: {
-                description: "Update appointment ",
+            200: {
+                description: "appointment status update",
                 content: {
                     // content-type
                     "application/json": {

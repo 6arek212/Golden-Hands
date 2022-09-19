@@ -2,14 +2,15 @@ const router = require('express').Router()
 const required_fields = require('../middleware/check_fields')
 const checkFields = require('../middleware/check_fields')
 const { getAppointments,
-    updateAppointment,
+    // updateAppointment,
+    updateAppointmentStatus,
     deleteAppointment,
     bookAppointment,
     unbookAppointment,
     getAvailableAppointments,
     createAppointment,
     getUserAppointment,
-    getUserAppointments
+    getUserAppointments,
 } = require('../controller/appointmentsController')
 
 
@@ -21,9 +22,11 @@ router.get('/', requireWorkerAuth, getAppointments)
 
 router.post('/', checkFields('body', ['worker', 'start_time', 'end_time']), requireWorkerAuth, createAppointment)
 
-router.patch('/:appointmentId', requireWorkerAuth, updateAppointment)
+router.patch('/update-status', checkFields('body', ['appointmentId']), requireWorkerAuth, updateAppointmentStatus)
 
 router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
+
+
 
 
 

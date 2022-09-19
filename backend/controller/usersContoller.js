@@ -73,20 +73,42 @@ exports.getUser = async (req, res, next) => {
 
 
 exports.updateUser = async (req, res, next) => {
-  const userId = req.user
+  const { userId: userIdParam } = req.params
+  const userIdAuth = req.user
 
-  console.log('--------------------', req.body);
+  console.log(userIdParam, userIdAuth, '--------------------', req.body);
+  if (userIdParam !== userIdAuth && !req.worker_mode) {
+    return res.status(403).json({
+      message: 'Your not allowed to change your role'
+    })
+  }
 
-  const user = await User.findOneAndUpdate({ _id: userId }, { ...req.body }, { runValidators: true, returnOriginal: false })
+
+  if (req.body.role && !req.worker_mode) {
+    return res.status(403).json({
+      message: 'Your not allowed to change your role'
+    })
+  }
+
+
+  if (req.body.phone || req.body.image) {
+    return res.status(403).json({
+      message: 'You cant update phone number or image through this route'
+    })
+  }
+
+
+  const user = await User.findOneAndUpdate({ _id: userIdParam }, { ...req.body }, { runValidators: true, returnOriginal: false })
 
   console.log(user);
-
   res.status(200).json({
     message: 'update success',
     user
   })
 
 }
+
+
 
 
 exports.deleteUser = async (req, res, next) => {

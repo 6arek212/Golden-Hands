@@ -3,7 +3,7 @@ const { requireAuth, requireWorkerAuth } = require('../middleware/check-auth')
 const upload = require('../middleware/file_uploader')
 
 
-const { getUsers, getUser, deleteUser, updateUser , uploadUserImage } = require('../controller/usersContoller')
+const { getUsers, getUser, deleteUser, updateUser , uploadUserImage  } = require('../controller/usersContoller')
 
 
 
