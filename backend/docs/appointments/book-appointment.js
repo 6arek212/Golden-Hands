@@ -35,16 +35,7 @@ module.exports = {
         description: "service", // desc
         example: "Hair Cut",
         required: true
-      },
-      {
-        name: "hold", // name of param
-        in: "body", // location of param
-        schema: {
-          type: "bool"
-        },
-        description: "indicates that you want to put the appointment in hold", // desc
-        example: 'true'
-      },
+      }
 
     ],
 

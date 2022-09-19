@@ -100,17 +100,9 @@ module.exports = {
                     status: {
                         type: "string",
                         description: "indicates the appointment status", // desc
-                        example: "'done', 'in-progress', 'didnt-come', 'free'",
+                        example: "'done', 'in-progress', 'didnt-come', 'free' , 'hold'",
                         default: 'free'
-                    },
-
-                    hold: {
-                        type: "boolean",
-                        description: "indicates if the appointment is in hold", // desc
-                        example: "true",
-                        default: 'false'
                     }
-
 
                 },
             },

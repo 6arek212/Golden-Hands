@@ -78,7 +78,7 @@ exports.getAppointments = async (req, res, next) => {
 exports.createAppointment = async (req, res, next) => {
 
     //required fields
-    const { worker, start_time, end_time, hold } = req.body
+    const { worker, start_time, end_time, status } = req.body
 
 
     try {
@@ -153,8 +153,7 @@ exports.createAppointment = async (req, res, next) => {
             start_time: start_time,
             end_time: end_time,
             workingDate: date,
-            hold: hold,
-            status: hold ? 'in-progress' : 'free'
+            status: status
         })
 
         res.status(201).json({
@@ -181,7 +180,6 @@ exports.getAvailableAppointments = async (req, res, next) => {
         const query = Appointment.find({
             worker: workerId,
             customer: null,
-            hold: false,
             status: 'free'
         })
 
@@ -206,7 +204,7 @@ exports.getUserAppointment = async (req, res, next) => {
     console.log('--------------- getAppointment requrest ----------------------------');
     const user = req.user
     try {
-        const appointment = await Appointment.findOne({ customer: user, hold: false, status: 'in-progress' })
+        const appointment = await Appointment.findOne({ customer: user, status: 'in-progress' })
             .populate('customer', 'firstName lastName phone role image')
             .populate('worker', 'firstName lastName phone role image')
 
@@ -225,7 +223,7 @@ exports.getUserAppointments = async (req, res, next) => {
 
     const user = req.user
     try {
-        const appointments = await Appointment.find({ customer: user, hold: false })
+        const appointments = await Appointment.find({ customer: user, status: { $ne: '' } })
             .populate('customer', 'firstName lastName phone role image')
             .populate('worker', 'firstName lastName phone role image').sort({ 'isActive': -1 })
 
@@ -270,12 +268,18 @@ exports.deleteAppointment = async (req, res, next) => {
 
 
 
-
+const statusEnum = ['done', 'in-progress', 'didnt-come', 'canceled', 'free', 'hold']
 
 exports.updateAppointmentStatus = async (req, res, next) => {
     try {
         const { appointmentId, status } = req.body
         const user = req.user
+
+        if (!(statusEnum.includes(status))) {
+            return res.status(400).json({
+                message: 'status in not valid'
+            })
+        }
 
         const appointment = await Appointment.findOne({ _id: appointmentId })
         if (!appointment) {
@@ -284,31 +288,31 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             })
         }
 
-        if (appointment.worker !== user) {
+        if (String(appointment.worker) !== user) {
             return res.status(403).json({
                 message: 'its not your appointment you cant modify it'
             })
         }
 
 
-
-        //if the status is not free you cant make it free again from this route
-        // if (appointment.status !== 'free' && status === 'free') {
-        //     return res.status(400).json({
-        //         message: 'You cant make this appointment free you need to unbook it first'
-        //     })
-        // }
-
-        if (status === 'free' && !appointment.customer) {
-            return res.status(403).json({
-                message: 'the appointment is booked you must unbook it first'
+        if ((status === 'free' || status === 'hold') && !appointment.customer) {
+            return res.status(400).json({
+                message: 'the appointment is booked, You can change the status to done , in-progress , didnt-come , canceled'
             })
+        }
+
+        //TODO: if we want to make the appointment in-progress again we the time must not be older than today !!!!! 
+        const updateOps = { status }
+        if ((status === 'free' || status === 'hold')) {
+            updateOps.customer = null
+            updateOps.service = null
         }
 
 
         const updatedAppointment = await Appointment.findOneAndUpdate(
             { _id: appointmentId, worker: user },
-            { ...updateOps })
+            { ...updateOps },
+            { new: true })
 
         if (!updatedAppointment) {
             return res.status(404).json({
@@ -332,7 +336,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
 
 exports.bookAppointment = async (req, res, next) => {
     try {
-        const { service, appointmentId, userId: customerId, hold } = req.body
+        const { service, appointmentId, userId: customerId } = req.body
         const user = req.user
 
         const appointmentExists = await Appointment.findOne({ _id: appointmentId })
@@ -350,30 +354,29 @@ exports.bookAppointment = async (req, res, next) => {
             })
         }
 
-        if (customerId !== user && req.worker_mode && hold) {
+
+        if (appointmentExists.status === 'hold') {
             return res.status(400).json({
-                message: 'you cant hold an appointment for a customer user'
+                message: 'the appointment is in hold you cant book it',
+                errorCode: 1
             })
         }
 
 
+        const hasAppointment = await Appointment.findOne({ customer: customerId, status: 'in-progress' })
 
-        if (!req.worker_mode || (req.worker_mode && !hold)) {
-
-            const hasAppointment = await Appointment.findOne({ customer: customerId, hold: false })
-
-            if (hasAppointment) {
-                return res.status(400).json({
-                    message: 'you already have an appointment',
-                    errorCode: 1
-                })
-            }
+        if (hasAppointment) {
+            return res.status(400).json({
+                message: 'you already have an appointment',
+                errorCode: 2
+            })
         }
+        // }
 
 
         const appointment = await Appointment.findOneAndUpdate(
-            { _id: appointmentId, customer: null, hold: false, status: 'free' },
-            { service, customer: customerId, status: 'in-progress', hold: req.worker_mode && hold ? true : false },
+            { _id: appointmentId, customer: null, status: 'free' },
+            { service, customer: customerId, status: 'in-progress' },
             { new: true, runValidators: true })
             .populate('worker', 'firstName lastName phone role image')
             .populate('customer', 'firstName lastName phone role image')
@@ -407,7 +410,6 @@ exports.unbookAppointment = async (req, res, next) => {
         const appointment = await Appointment.findOne({ _id: appointmentId })
 
 
-
         if (!appointment) {
             return res.status(404).json({
                 message: 'appointment was not found !'
@@ -417,7 +419,7 @@ exports.unbookAppointment = async (req, res, next) => {
         if (!appointment.customer) {
             return res.status(400).json({
                 message: 'appointment is not booked !',
-                errorCode: 2
+                errorCode: 1
             })
         }
 
@@ -430,7 +432,7 @@ exports.unbookAppointment = async (req, res, next) => {
 
         await Appointment.updateOne(
             { _id: appointmentId },
-            { service: null, customer: null, status: 'free', hold: false }
+            { service: null, customer: null, status: 'free' }
         )
 
         res.status(200).json({

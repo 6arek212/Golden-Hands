@@ -38,13 +38,13 @@ module.exports = {
         required: true
       },
       {
-        name: "hold", // name of param
-        in: "body", // location of param
+        name: "status", 
+        in: "body", 
         schema: {
-          type: "bool"
+          type: "string",
         },
-        description: "make a holded appointment , preventing from beeing booked until the worker allows it", 
-        example: 'true'
+        description: "You can give a diffrent status from the default one 'free'", 
+        example: "'done', 'in-progress', 'didnt-come', 'canceled', 'free', 'hold'"
       }
 
     ], 
