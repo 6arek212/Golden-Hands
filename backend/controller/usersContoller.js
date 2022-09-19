@@ -78,8 +78,8 @@ exports.updateUser = async (req, res, next) => {
 
   console.log(userIdParam, userIdAuth, '--------------------', req.body);
   if (userIdParam !== userIdAuth && !req.worker_mode) {
-    return res.status(403).json({
-      message: 'Your not allowed to change your role'
+    return res.status(401).json({
+      message: 'Your not allowed'
     })
   }
 
