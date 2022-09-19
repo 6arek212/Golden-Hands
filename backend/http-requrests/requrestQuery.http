@@ -76,8 +76,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZ
 
 {
     "workingDate":"631cc623d509d93a57af2d19",
-    "start_time":"2022-09-22T12:00:00+0300" , 
-    "end_time":"2022-09-22T14:30:00+0300" , 
+    "start_time":"2022-09-22T18:00:00+0300" , 
+    "end_time":"2022-09-22T18:30:00+0300" , 
     "worker":"6317b6ded417e4cbffde4da5"    
 }
 
@@ -122,6 +122,6 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjM2MTI0ODEsImV4cCI6MTY2Mzg3MTY4MX0.MwoTlxjOJ6Or7IiwEKPo9yPUE8j-mD22ojPPJuzGlYs
 
 {
-    "appointmentId": "6328b9272c6cade911e1f7e3",
-    "status": "free"
+    "appointmentId": "6328d01d2c425fd2ed4e68ca",
+    "status": "canceled"
 }

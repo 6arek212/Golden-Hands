@@ -223,9 +223,9 @@ exports.getUserAppointments = async (req, res, next) => {
 
     const user = req.user
     try {
-        const appointments = await Appointment.find({ customer: user, status: { $ne: '' } })
+        const appointments = await Appointment.find({ customer: user })
             .populate('customer', 'firstName lastName phone role image')
-            .populate('worker', 'firstName lastName phone role image').sort({ 'isActive': -1 })
+            .populate('worker', 'firstName lastName phone role image').sort({ 'status': 'desc' })
 
         res.status(200).json({
             message: 'fetched appointment successfull',
