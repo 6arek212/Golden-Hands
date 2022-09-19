@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
 
 
 // statiac signup method
-userSchema.statics.signup = async function ({ phone, firstName, lastName, birthDate, imagePath, adminMode }) {
+userSchema.statics.signup = async function ({ phone, firstName, lastName, birthDate, imagePath, role }) {
 
     //validation
     if (!phone || !firstName || !lastName) {
@@ -52,14 +52,14 @@ userSchema.statics.signup = async function ({ phone, firstName, lastName, birthD
         throw Error('Phone already in use')
     }
 
-    const user = await this.create({ phone, firstName, lastName, birthDate, image: imagePath })
+    const user = await this.create({ phone, firstName, lastName, birthDate, image: imagePath, role: role })
 
     return user
 }
 
 
 // statiac login method
-userSchema.statics.login = async function (phone, adminMode) {
+userSchema.statics.login = async function (phone) {
 
     //validation
     if (!phone) {

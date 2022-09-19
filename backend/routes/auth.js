@@ -7,7 +7,7 @@ const { requireAuth } = require('../middleware/check-auth')
 
 router.post('/send-auth-verification', attachUserInfo, checkFields('body', ['phone']), sendAuthVerification)
 
-router.post('/signup-verify-phone', checkFields('body', ['firstName', 'lastName', 'birthDate', 'phone', 'verifyId', 'code']), verifyAndSignup)
+router.post('/signup-verify-phone', attachUserInfo, checkFields('body', ['firstName', 'lastName', 'birthDate', 'phone', 'verifyId', 'code']), verifyAndSignup)
 
 router.post('/login-verify-phone', checkFields('body', ['phone', 'verifyId', 'code']), verifyAndLogin)
 

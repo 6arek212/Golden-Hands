@@ -59,6 +59,14 @@ module.exports = {
                 },
                 description: "verify code", // short desc.
                 required: true
+            },
+            {
+                name: "role",
+                in: "body",
+                schema: {
+                    type: "string"
+                },
+                description: "the user role 'customer' , 'barber' , the defualt is 'customer'", // short desc.
             }
         ],
         // expected responses

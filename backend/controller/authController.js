@@ -67,7 +67,7 @@ const createToken = (_id, type = 'auth') => {
 // TODO: Adjust for loginin with admin / customer 
 /// ADD LOGIN AUTH AND PREVENT IF NOT EXISTS
 exports.sendAuthVerification = async (req, res, next) => {
-    const { phone, isLogin, isSignup, adminMode } = req.body
+    const { phone, isLogin, isSignup } = req.body
 
     console.log(isLogin);
 
@@ -137,7 +137,8 @@ exports.sendAuthVerification = async (req, res, next) => {
 
 
 exports.verifyAndSignup = async (req, res, next) => {
-    const { verifyId, code, firstName, lastName, birthDate, phone, adminMode } = req.body
+    const { verifyId, code, firstName, lastName, birthDate, phone, role } = req.body
+    const worker_mode = req.worker_mode
 
     try {
         let user = await User.findOne({ phone: phone })
@@ -163,7 +164,10 @@ exports.verifyAndSignup = async (req, res, next) => {
             })
         }
 
-        user = await User.signup({ firstName, lastName, phone, birthDate, adminMode })
+        user = await User.signup({
+            firstName, lastName, phone, birthDate,
+            role: worker_mode && role ? role : 'customer'
+        })
 
 
         //create token
@@ -180,7 +184,6 @@ exports.verifyAndSignup = async (req, res, next) => {
                     phone: user.phone,
                     role: user.role,
                     image: user.image,
-                    adminMode
                 },
                 token,
                 refresh_token,
@@ -196,7 +199,7 @@ exports.verifyAndSignup = async (req, res, next) => {
 
 
 exports.verifyAndLogin = async (req, res, next) => {
-    const { phone, verifyId, code, adminMode } = req.body
+    const { phone, verifyId, code } = req.body
 
     try {
 
@@ -214,7 +217,7 @@ exports.verifyAndLogin = async (req, res, next) => {
             })
         }
 
-        let user = await User.login(phone, adminMode)
+        let user = await User.login(phone)
         // console.log('aaaaaaaaa');
 
         //create token
@@ -232,7 +235,7 @@ exports.verifyAndLogin = async (req, res, next) => {
                     phone: user.phone,
                     role: user.role,
                     image: user.image,
-                    adminMode
+
                 },
                 token,
                 refresh_token,
