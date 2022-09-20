@@ -43,8 +43,8 @@ app.use(bodyParser.json())
 
 
 
-const html = path.join(__dirname, 'imgs')
-app.use('/imgs', express.static(html));
+const imgsPath = path.join(__dirname, 'imgs')
+app.use('/imgs', express.static(imgsPath));
 
 
 
@@ -55,11 +55,16 @@ app.use('/api/users', usersRoutes)
 app.use('/api', authRoutes)
 app.use('/api/workers', workersRoutes)
 app.use('/api/dashboard', dashboardRoutes)
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(docs));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(docs));
 
 
 
+const htmlPath = path.join(__dirname, 'html')
+app.use(express.static(htmlPath));
 
+app.use('/', (req, res, next) => {
+  res.sendFile(htmlPath + '/index.html')
+})
 
 
 //handling errors
