@@ -9,6 +9,7 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         //_${new Date().toISOString()}
+        console.log('file name', `${req.user}${path.extname(file.originalname)}`);
         cb(null, `${req.user}${path.extname(file.originalname)}`)
     }
 })
@@ -17,6 +18,7 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+        console.log('image type', file.mimetype);
         return cb(null, true)
     }
     cb(null, true)
