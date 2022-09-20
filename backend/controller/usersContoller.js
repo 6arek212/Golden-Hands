@@ -10,11 +10,7 @@ exports.uploadUserImage = async (req, res, next) => {
     const userId = req.user
     console.log(req.file, userId);
 
-    res.status(200).json({
-      message:'done'
-    })
-
-    // await User.updateOne({ _id: userId }, { image: filename })
+    await User.updateOne({ _id: userId }, { image: filename })
 
 
     // const srcPath = path.join(__dirname, '..', 'temp', filename)
@@ -24,14 +20,16 @@ exports.uploadUserImage = async (req, res, next) => {
     // source.pipe(dest);
     // source.on('end', function () {
     //   fs.unlinkSync(srcPath)
-    //   res.status(201).json({
-    //     message: 'image uploaded',
-    //     filename: filename
-    //   })
+    //   
     // });
     // source.on('error', function (err) {
     //   next(err)
     // });
+
+    res.status(201).json({
+      message: 'image uploaded',
+      filename: filename
+    })
 
   } catch (e) {
     next(e)

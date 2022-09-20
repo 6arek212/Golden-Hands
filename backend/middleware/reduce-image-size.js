@@ -12,17 +12,27 @@ module.exports.reduceImageSize = async (req, res, next) => {
 
     try {
         const user = req.user
-        const { buffer, filename, originalname } = req.file;
+        const { buffer, originalname } = req.file;
         const ref = `${user}${path.extname(originalname)}`;
 
-        console.log(req.file);
 
-        await sharp(buffer)
-            .webp({ quality: 20 })
+        if (req.file.buffer.length == 0) {
+            return res.status(400).json({
+                message: 'image cant be empty'
+            })
+        }
+
+
+        await sharp(buffer, { failOnError: false })
+            .webp({ quality: 100 })
+            .withMetadata()
+            .resize(960, 960)
+            .rotate()
             .toFile(path.join(__dirname, '..', 'imgs', ref));
 
         next()
     } catch (e) {
+        console.log('error while compression', e);
         res.status(400).json({
             message: 'error uploading'
         })
