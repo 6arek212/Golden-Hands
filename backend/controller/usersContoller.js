@@ -10,24 +10,28 @@ exports.uploadUserImage = async (req, res, next) => {
     const userId = req.user
     console.log(req.file, userId);
 
-    await User.updateOne({ _id: userId }, { image: filename })
+    res.status(200).json({
+      message:'done'
+    })
+
+    // await User.updateOne({ _id: userId }, { image: filename })
 
 
-    const srcPath = path.join(__dirname, '..', 'temp', filename)
-    var source = fs.createReadStream(srcPath);
-    var dest = fs.createWriteStream(path.join(__dirname, '..', 'imgs', filename));
+    // const srcPath = path.join(__dirname, '..', 'temp', filename)
+    // var source = fs.createReadStream(srcPath);
+    // var dest = fs.createWriteStream(path.join(__dirname, '..', 'imgs', filename));
 
-    source.pipe(dest);
-    source.on('end', function () {
-      fs.unlinkSync(srcPath)
-      res.status(201).json({
-        message: 'image uploaded',
-        filename: filename
-      })
-    });
-    source.on('error', function (err) {
-      next(err)
-    });
+    // source.pipe(dest);
+    // source.on('end', function () {
+    //   fs.unlinkSync(srcPath)
+    //   res.status(201).json({
+    //     message: 'image uploaded',
+    //     filename: filename
+    //   })
+    // });
+    // source.on('error', function (err) {
+    //   next(err)
+    // });
 
   } catch (e) {
     next(e)
