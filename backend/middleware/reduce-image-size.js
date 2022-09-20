@@ -14,7 +14,7 @@ module.exports.reduceImageSize = async (req, res, next) => {
         const user = req.user
         const { buffer, originalname } = req.file;
         const ref = `${user}${path.extname(originalname)}`;
-
+        req.file.filename = ref
 
         if (req.file.buffer.length == 0) {
             return res.status(400).json({
