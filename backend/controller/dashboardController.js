@@ -23,3 +23,81 @@ exports.getStats = async (req, res, next) => {
         closestAppointments
     })
 }
+
+
+exports.getWorkerRevenue = async (req, res, next) => {
+    const { workerId } = req.query
+
+    const $match =
+    {
+        status: 'in-progress'
+    }
+
+    if (workerId) {
+        $match.worker = workerId
+    }
+
+    const result = await Appointment.aggregate([
+        {
+            $match
+        },
+        {
+
+            $lookup: {
+                from: 'users',
+                localField: 'worker',
+                foreignField: '_id',
+                as: 'worker'
+            }
+
+        },
+        {
+            $unwind: "$worker"
+        },
+
+        {
+
+            $lookup: {
+                from: 'services',
+                localField: 'service',
+                foreignField: '_id',
+                as: 'service'
+            }
+
+        },
+
+        {
+            $unwind: "$service"
+        },
+
+        {
+            $group: {
+                _id: {
+                    worker: "$worker",
+                    workingDate: "$workingDate"
+                },
+                revenue: { $sum: "$service.price" },
+                count: { $count: {} }
+            }
+        },
+
+
+
+        {
+            $project: {
+                _id: 0,
+                worker: "$_id.worker",
+                workingDate: "$_id.workingDate",
+                revenue: "$revenue",
+                count: "$count"
+            }
+        }
+
+    ])
+
+
+    res.status(200).json({
+        message: 'fetch success',
+        data: result
+    })
+}

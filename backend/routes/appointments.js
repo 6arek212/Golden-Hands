@@ -28,8 +28,13 @@ router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
 
 
 const App = require('../models/appointment')
-router.delete('/', async () => {
+router.delete('/', async (req, res) => {
     await App.deleteMany()
+
+    res.json({
+        data
+    })
+
 })
 
 
