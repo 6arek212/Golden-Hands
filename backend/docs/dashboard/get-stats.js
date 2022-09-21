@@ -39,21 +39,32 @@ module.exports = {
                                 },
 
 
+                                "doneAppointmentsCount": {
+                                    type: "int",
+                                    description: "appointments number",
+                                    example: "133",
+                                },
+
+
+                                "pendingAppointmentsCount": {
+                                    type: "int",
+                                    description: "appointments number",
+                                    example: "30",
+                                },
+
+
+                                "canceledAppointmentsCount": {
+                                    type: "int",
+                                    description: "appointments number",
+                                    example: "2",
+                                },
+
                                 "newCustomers": {
                                     "type": "array",
                                     "items": {
                                         $ref: "#/components/schemas/User"
                                     },
                                     "describtion": "The lastest joined customers"
-                                },
-
-
-                                "closestAppointments": {
-                                    "type": "array",
-                                    "items": {
-                                        $ref: "#/components/schemas/Appointment"
-                                    },
-                                    "describtion": "The Closest Appointments"
                                 },
 
                             }
