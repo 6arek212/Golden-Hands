@@ -1,6 +1,5 @@
 const path = require('path')
 const multer = require('multer')
-const { requireAuth } = require('../middleware/check-auth')
 
 
 const storage = multer.diskStorage({

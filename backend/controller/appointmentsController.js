@@ -361,17 +361,19 @@ exports.bookAppointment = async (req, res, next) => {
         if (appointmentExists.status === 'hold') {
             return res.status(400).json({
                 message: 'the appointment is in hold you cant book it',
-                errorCode: 1
+                errorCode: 3
             })
         }
 
 
         const hasAppointment = await Appointment.findOne({ customer: customerId, status: 'in-progress' })
 
+        console.log('has appointment',hasAppointment);
+
         if (hasAppointment) {
             return res.status(400).json({
                 message: 'you already have an appointment',
-                errorCode: 2
+                errorCode: 1
             })
         }
 
