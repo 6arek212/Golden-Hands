@@ -27,6 +27,10 @@ router.patch('/update-status', checkFields('body', ['appointmentId']), requireWo
 router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
 
 
+const App = require('../models/appointment')
+router.delete('/', async () => {
+    await App.deleteMany()
+})
 
 
 

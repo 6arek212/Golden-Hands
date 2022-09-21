@@ -87,7 +87,7 @@ exports.createAppointment = async (req, res, next) => {
         const e_time = new Date(end_time)
         const date = new Date(s_time.toDateString())
 
-
+        console.log('create appointment', s_time, e_time, date);
         // check if the worker is valid
 
         if (!mongoose.Types.ObjectId.isValid(worker)) {
@@ -368,7 +368,7 @@ exports.bookAppointment = async (req, res, next) => {
 
         const hasAppointment = await Appointment.findOne({ customer: customerId, status: 'in-progress' })
 
-        console.log('has appointment',hasAppointment);
+        console.log('has appointment', hasAppointment);
 
         if (hasAppointment) {
             return res.status(400).json({
