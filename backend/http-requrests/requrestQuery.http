@@ -24,7 +24,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZ
 ###
 
 # get active appointments 
-GET http://localhost:4000/api/appointments?isActive=true HTTP/1.1
+GET http://localhost:4000/api/appointments HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjM2MTI0ODEsImV4cCI6MTY2Mzg3MTY4MX0.MwoTlxjOJ6Or7IiwEKPo9yPUE8j-mD22ojPPJuzGlYs
 
 
@@ -122,6 +122,6 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzE3YjZkZWQ0MTdlNGNiZmZkZTRkYTUiLCJpYXQiOjE2NjM2MTI0ODEsImV4cCI6MTY2Mzg3MTY4MX0.MwoTlxjOJ6Or7IiwEKPo9yPUE8j-mD22ojPPJuzGlYs
 
 {
-    "appointmentId": "6328d01d2c425fd2ed4e68ca",
-    "status": "canceled"
+    "appointmentId": "6329f93a9ac61939ec36a2a5",
+    "status": "free"
 }
