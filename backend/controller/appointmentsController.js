@@ -85,13 +85,10 @@ exports.createAppointment = async (req, res, next) => {
         const current_date = new Date()
         const s_time = new Date(start_time)
         const e_time = new Date(end_time)
-        const date = new Date(s_time)
-        // console.log(date);
-        // var today = new Date(Date.UTC(s_time.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() ));
-
-        date.setHours(0, 0, 0, 0)
-        console.log(date);
-
+        // const date = new Date(s_time)
+        // console.log(s_time.toDateString() , date);
+        // var date = new Date(Date.UTC(s_time.getUTCFullYear(), s_time.getUTCMonth(), s_time.getUTCDate() ));
+        var date = new Date(s_time.getFullYear(), s_time.getMonth(), s_time.getDate());
 
         console.log('create appointment', date);
         // check if the worker is valid
