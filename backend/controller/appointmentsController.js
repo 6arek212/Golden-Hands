@@ -85,9 +85,15 @@ exports.createAppointment = async (req, res, next) => {
         const current_date = new Date()
         const s_time = new Date(start_time)
         const e_time = new Date(end_time)
-        const date = new Date(s_time.toDateString())
+        const date = new Date(s_time)
+        // console.log(date);
+        // var today = new Date(Date.UTC(s_time.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() ));
 
-        console.log('create appointment', s_time, e_time, date);
+        date.setHours(0, 0, 0, 0)
+        console.log(date);
+
+
+        console.log('create appointment', date);
         // check if the worker is valid
 
         if (!mongoose.Types.ObjectId.isValid(worker)) {
