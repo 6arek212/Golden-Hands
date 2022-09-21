@@ -3,7 +3,6 @@ const User = require('../models/user')
 const mongoose = require('mongoose')
 
 
-
 exports.getAppointments = async (req, res, next) => {
     console.log('--------------- getAppointments requrest ----------------------------');
     const { workerId, service, start_time, end_time, pageSize, currentPage, customerId, sort, isActive } = req.query
@@ -81,16 +80,21 @@ exports.createAppointment = async (req, res, next) => {
     const { worker, start_time, end_time, status } = req.body
 
 
+
     try {
         const current_date = new Date()
         const s_time = new Date(start_time)
         const e_time = new Date(end_time)
-        // const date = new Date(s_time)
-        // console.log(s_time.toDateString() , date);
-        // var date = new Date(Date.UTC(s_time.getUTCFullYear(), s_time.getUTCMonth(), s_time.getUTCDate() ));
-        var date = new Date(s_time.getFullYear(), s_time.getMonth(), s_time.getDate());
+        const timezone = start_time.substring(start_time.length - 5)
 
-        console.log('create appointment', date);
+        // var date = new Date(Date.UTC(s_time.getUTCFullYear(), s_time.getUTCMonth(), s_time.getUTCDate()) + timezone);
+        // var date = new Date(s_time.getFullYear(), s_time.getMonth(), s_time.getDate());
+        const date = new Date(start_time.split('T')[0] + 'T00:00:00' + timezone)
+
+        console.log('create appointment __date__', date, '__start__',
+            s_time, '__end__', e_time);
+
+
         // check if the worker is valid
 
         if (!mongoose.Types.ObjectId.isValid(worker)) {
@@ -135,6 +139,17 @@ exports.createAppointment = async (req, res, next) => {
         if (diff * 60 < 5) {
             return res.status(400).json({
                 message: 'the dates must differ by at least 5 min !'
+            })
+        }
+
+
+        const maxEndDate = new Date(date)
+        maxEndDate.setDate(maxEndDate.getDate() + 1)
+        console.log('min start date', date, 'max end date', maxEndDate);
+
+        if (e_time >= maxEndDate) {
+            return res.status(400).json({
+                message: 'the max end date is 23:59 , and days cant intersect'
             })
         }
 
