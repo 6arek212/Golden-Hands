@@ -14,3 +14,4 @@ const appointmentSchema = new mongoose.Schema({
     })
 
 module.exports = mongoose.model('appointment', appointmentSchema)
+//TODO: SERVICE ID

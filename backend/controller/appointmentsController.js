@@ -360,6 +360,8 @@ exports.bookAppointment = async (req, res, next) => {
         const { service, appointmentId, userId: customerId } = req.body
         const user = req.user
 
+        const currentDate = new Date()
+
         const appointmentExists = await Appointment.findOne({ _id: appointmentId })
 
         if (!appointmentExists) {
@@ -368,6 +370,11 @@ exports.bookAppointment = async (req, res, next) => {
             })
         }
 
+        if(appointmentExists.start_time < currentDate){
+            return res.status(404).json({
+                message: 'you cant book an old appointment'
+            })
+        }
 
         if (user !== customerId && !req.worker_mode) {
             return res.status(401).json({
