@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -30,6 +31,7 @@ const userSchema = new mongoose.Schema({
     role: { type: String, required: true, default: 'customer', enum: ['barber', 'customer'] },
     image: { type: String }
 }, {
+    strictPopulate: false,
     timestamps: true
 })
 

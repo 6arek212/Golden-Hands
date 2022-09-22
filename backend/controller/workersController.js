@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const { Service } = require('../models/service')
 const Appointment = require('../models/appointment')
 const mongoose = require('mongoose')
 
@@ -10,17 +11,86 @@ module.exports.getWorkers = async (req, res, next) => {
         const workers = await User
             .find()
             .where('role').ne('customer')
-            .select('_id firstName lastName phone role image')
+            .select('_id firstName lastName phone role image services')
+            .populate('services')
+
+        const data = await User.aggregate([
+            {
+                $match: {
+                    role: { $ne: 'customer' }
+                }
+            },
+
+            {
+                $addFields: {
+                    services: '$_id'
+                }
+
+            },
+
+            {
+                $lookup: {
+                    from: 'services',
+                    localField: 'services',
+                    foreignField: 'worker',
+                    as: 'services'
+                }
+            },
+
+            {
+                "$project": {
+                    "_id": 1,
+                    "firstName": 1,
+                    "lastName": 1,
+                    "phone": 1,
+                    "role": 1,
+                    "createdAt": 1,
+                    "image": 1,
+                    "services._id": 1,
+                    "services.title": 1,
+                    "services.price": 1
+                }
+            }
+
+        ])
 
         res.status(200).json({
             message: 'fetch workers success',
-            workers
+            workers: data
         })
     }
     catch (e) {
         next(e)
     }
 }
+
+
+
+module.exports.getWorkerServices = async (req, res, next) => {
+    const { workerId } = req.params
+    console.log('----------------getWorkerServices----------------');
+
+    if (!mongoose.Types.ObjectId.isValid(workerId)) {
+        return res.status(404).json({
+            message: 'worker id is not valid'
+        })
+    }
+
+    try {
+        const services = await Service
+            .find({ worker: workerId })
+
+
+        res.status(200).json({
+            message: 'fetch services success',
+            services
+        })
+    }
+    catch (e) {
+        next(e)
+    }
+}
+
 
 
 module.exports.getWorker = async (req, res, next) => {

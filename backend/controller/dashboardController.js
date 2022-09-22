@@ -39,6 +39,7 @@ exports.getWorkerRevenue = async (req, res, next) => {
         {
             $match
         },
+
         {
 
             $lookup: {
@@ -51,21 +52,6 @@ exports.getWorkerRevenue = async (req, res, next) => {
         },
         {
             $unwind: "$worker"
-        },
-
-        {
-
-            $lookup: {
-                from: 'services',
-                localField: 'service',
-                foreignField: '_id',
-                as: 'service'
-            }
-
-        },
-
-        {
-            $unwind: "$service"
         },
 
         {

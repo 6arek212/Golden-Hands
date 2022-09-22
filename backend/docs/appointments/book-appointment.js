@@ -32,8 +32,8 @@ module.exports = {
         schema: {
           type: "string"
         },
-        description: "service", // desc
-        example: "Hair Cut",
+        description: "service id", // desc
+        example: "632b7206e93d4b29a28ad148",
         required: true
       }
 

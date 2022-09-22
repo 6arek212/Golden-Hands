@@ -32,7 +32,7 @@ router.delete('/', async (req, res) => {
     await App.deleteMany()
 
     res.json({
-        data
+        
     })
 
 })

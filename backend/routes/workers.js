@@ -1,6 +1,6 @@
 const router = require('express').Router()
-const { getWorkers, getWorkingDates, insertWorkingDate, getWorker } = require('../controller/workersController')
-const { requireWorkerAuth , requireAuth} = require('../middleware/check-auth')
+const { getWorkers, getWorkingDates, insertWorkingDate, getWorker, getWorkerServices } = require('../controller/workersController')
+const { requireWorkerAuth, requireAuth } = require('../middleware/check-auth')
 const checkFields = require('../middleware/check_fields')
 
 
@@ -14,47 +14,12 @@ router.get('/working-dates', checkFields('query', ['workerId']), requireAuth, ge
 router.get('/', getWorkers)
 
 
+router.get('/services/:workerId', getWorkerServices)
+
+
 router.get('/:workerId', requireAuth, getWorker)
 
 
 module.exports = router
 
 
-
-
-
-
-
-
-
-/**
- * WorkingDatePayload
- * @typedef {object} WorkingDatePayload
- * @property {string} date.required - 
- */
-
-
-
-
-
-/**
- * POST /api/workers/working-date
- * @summary insert a working date
- * @tags Working Date
- * @param {WorkingDatePayload} request.body.required - format yyyy-MM-ddTHH:mm:ssZ
- * @return {object} 201 - success response - application/json
- * @return {Message} 400 - Bad request response
- * @example response - 201 - success response - application/json
-{
-    "message": "insert working date success",
-    "workingDate": {
-        "worker": "6317b6ded417e4cbffde4da5",
-        "date": "2022-09-20T21:00:00.000Z",
-        "isActive": true,
-        "_id": "631d9b76538bd05972664620",
-        "createdAt": "2022-09-11T08:25:26.156Z",
-        "updatedAt": "2022-09-11T08:25:26.156Z",
-        "__v": 0
-    }
-}
-*/

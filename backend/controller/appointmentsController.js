@@ -1,5 +1,6 @@
 const Appointment = require('../models/appointment')
 const User = require('../models/user')
+const { Service } = require('../models/service')
 const mongoose = require('mongoose')
 
 
@@ -205,7 +206,7 @@ exports.getAvailableAppointments = async (req, res, next) => {
             query.where('workingDate').equals(date)
         }
 
-        const appointments = await query.populate('worker', 'firstName lastName phone role image')
+        const appointments = await query.populate('worker', 'firstName lastName phone role image').sort({ start_time: 'asc' })
 
         res.status(200).json({
             message: 'fetched success',
@@ -370,11 +371,12 @@ exports.bookAppointment = async (req, res, next) => {
             })
         }
 
-        if(appointmentExists.start_time < currentDate){
+        if (appointmentExists.start_time < currentDate) {
             return res.status(400).json({
                 message: 'you cant book an old appointment'
             })
         }
+
 
         if (user !== customerId && !req.worker_mode) {
             return res.status(401).json({
@@ -403,9 +405,24 @@ exports.bookAppointment = async (req, res, next) => {
         }
 
 
+        const serviceDoc = await Service
+            .findOne({ _id: service, worker: appointmentExists.worker })
+            .select('price title')
+            
+        if (!serviceDoc) {
+            return res.status(404).json({
+                message: 'service could not be found'
+            })
+        }
+
+
+        console.log(serviceDoc);
+
+
+
         const appointment = await Appointment.findOneAndUpdate(
             { _id: appointmentId, customer: null, status: 'free' },
-            { service, customer: customerId, status: 'in-progress' },
+            { service: serviceDoc, customer: customerId, status: 'in-progress' },
             { new: true, runValidators: true })
             .populate('worker', 'firstName lastName phone role image')
             .populate('customer', 'firstName lastName phone role image')
