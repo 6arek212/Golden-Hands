@@ -65,7 +65,9 @@ exports.getWorkerRevenue = async (req, res, next) => {
             }
         },
 
-
+        {
+            $sort: { workingDate: 1 }
+        },
 
         {
             $project: {
@@ -85,3 +87,10 @@ exports.getWorkerRevenue = async (req, res, next) => {
         data: result
     })
 }
+
+
+
+
+
+
+

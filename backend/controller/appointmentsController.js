@@ -189,11 +189,10 @@ exports.createAppointment = async (req, res, next) => {
 
 
 exports.getAvailableAppointments = async (req, res, next) => {
-    const { workerId, workingDate } = req.query
+    const { workerId, workingDate, fromDate } = req.query
 
-    console.log(workerId, workingDate);
-    const date = new Date(workingDate)
-
+    const date = new Date(fromDate)
+    console.log(workerId, fromDate, date , workingDate);
 
     try {
         const query = Appointment.find({
@@ -202,11 +201,12 @@ exports.getAvailableAppointments = async (req, res, next) => {
             status: 'free'
         })
 
-        if (workingDate) {
-            query.where('workingDate').equals(date)
-        }
+        query.where('start_time').gte(date)
+        query.where('workingDate').equals(workingDate)
+
 
         const appointments = await query.populate('worker', 'firstName lastName phone role image').sort({ start_time: 'asc' })
+
 
         res.status(200).json({
             message: 'fetched success',
@@ -361,6 +361,7 @@ exports.bookAppointment = async (req, res, next) => {
         const { service, appointmentId, userId: customerId } = req.body
         const user = req.user
 
+
         const currentDate = new Date()
 
         const appointmentExists = await Appointment.findOne({ _id: appointmentId })
@@ -371,9 +372,11 @@ exports.bookAppointment = async (req, res, next) => {
             })
         }
 
+
         if (appointmentExists.start_time < currentDate) {
             return res.status(400).json({
-                message: 'you cant book an old appointment'
+                message: 'you cant book an old appointment',
+                errorCode: 4
             })
         }
 
@@ -408,7 +411,7 @@ exports.bookAppointment = async (req, res, next) => {
         const serviceDoc = await Service
             .findOne({ _id: service, worker: appointmentExists.worker })
             .select('price title')
-            
+
         if (!serviceDoc) {
             return res.status(404).json({
                 message: 'service could not be found'
