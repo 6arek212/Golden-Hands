@@ -371,7 +371,7 @@ exports.bookAppointment = async (req, res, next) => {
         }
 
         if(appointmentExists.start_time < currentDate){
-            return res.status(404).json({
+            return res.status(400).json({
                 message: 'you cant book an old appointment'
             })
         }
