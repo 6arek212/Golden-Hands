@@ -22,7 +22,7 @@ module.exports = {
                 schema: {
                     type: "string"
                 },
-                description: "service title", // short desc.
+                description: "service title , enum: ['Hair Cut', 'Face Cut' ,'Wax', 'Massage']", // short desc.
                 required: true
             },
 
