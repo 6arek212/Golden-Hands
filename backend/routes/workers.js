@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { getWorkers, getWorkingDates, insertWorkingDate, getWorker, getWorkerServices } = require('../controller/workersController')
+const { getWorkers, getWorkingDates, insertWorkerService, deleteWorkerService, getWorker, getWorkerServices } = require('../controller/workersController')
 const { requireWorkerAuth, requireAuth } = require('../middleware/check-auth')
 const checkFields = require('../middleware/check_fields')
 
@@ -15,6 +15,12 @@ router.get('/', getWorkers)
 
 
 router.get('/services/:workerId', getWorkerServices)
+
+
+router.post('/services', checkFields('body', ['worker', 'price', 'title']), insertWorkerService)
+
+
+router.delete('/services/:serviceId', checkFields('param', ['serviceId']), deleteWorkerService)
 
 
 router.get('/:workerId', requireAuth, getWorker)

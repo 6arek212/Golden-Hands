@@ -22,6 +22,7 @@ const requireAuth = async (req, res, next) => {
         }
 
         req.worker_mode = user.role !== 'customer'
+        req.superUser = user.superUser
         req.user = _id
         next()
     }
@@ -43,7 +44,10 @@ const attachUserInfo = async (req, res, next) => {
 
     try {
         const { _id } = await jwt.verify(token, process.env.SECRET)
+        const user = await User.findOne({ _id })
+        req.worker_mode = user.role !== 'customer'
         req.user = _id
+        req.superUser = user.superUser
         next()
     }
     catch (error) {
@@ -71,7 +75,7 @@ const requireWorkerAuth = async (req, res, next) => {
                 message: 'Request is not authorized'
             })
         }
-
+        req.superUser = worker.superUser
         req.user = _id
         next()
     }

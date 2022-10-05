@@ -2,6 +2,7 @@ const sendAuthVerification = require('./send-auth-verification');
 const verifyAndSignup = require('./verify-and-signup');
 const verifyAndLogin = require('./verify-and-login');
 const refreshToken = require('./refresh-token');
+const signup = require('./signup');
 
 
 
@@ -21,5 +22,9 @@ module.exports = {
     '/api/refresh-token': {
         ...refreshToken
     },
+
+    '/api/signup': {
+        ...signup
+    }
 
 }

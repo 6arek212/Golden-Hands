@@ -135,10 +135,54 @@ exports.sendAuthVerification = async (req, res, next) => {
 
 
 
+exports.signup = async (req, res, next) => {
+    const { firstName, lastName, birthDate, phone, role } = req.body
+    const { superUser, user, } = req
+
+    if (!superUser) {
+        return res.status(400).json({
+            message: "only super user can use this route"
+        })
+    }
+
+    try {
+        user = await User.signup({
+            firstName, lastName, phone, birthDate,role
+        })
+
+
+        //create token
+        const token = createToken(user._id, 'auth')
+        const refresh_token = createToken(user._id, 'refresh')
+
+        res.status(201).json({
+            message: 'signup sucess',
+            authData: {
+                user: {
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    phone: user.phone,
+                    role: user.role,
+                    image: user.image,
+                },
+                token,
+                refresh_token,
+                expiresIn: 3 * 24 * 60 * 60
+            }
+        })
+    }
+    catch (e) {
+        next(e)
+    }
+
+}
+
+
 
 exports.verifyAndSignup = async (req, res, next) => {
     const { verifyId, code, firstName, lastName, birthDate, phone, role } = req.body
-    const worker_mode = req.worker_mode
+    const { worker_mode } = req
 
     try {
         let user = await User.findOne({ phone: phone })

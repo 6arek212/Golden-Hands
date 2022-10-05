@@ -123,6 +123,35 @@ module.exports = {
                 },
             },
 
+            Service: {
+                type: "object", // data type
+                properties: {
+                    _id: {
+                        type: "string", // data-type
+                        description: "Appoitnemnt identification number", // desc
+                        example: "ASDFERGXCVSADF234ASCADSXC34TRFRGV", // example of an id
+                    },
+                    worker: {
+                        $ref: '#/components/schemas/User',
+                        description: "the worker", // desc
+                        required: true
+                    },
+                    price: {
+                        type: "string",
+                        description: "price", // desc
+                        example: "70",
+                        required: true
+                    },
+                    title: {
+                        type: "string",
+                        description: "title", // desc
+                        example: "Wax",
+                        required: true
+                    }
+                },
+            },
+
+
             Message: {
                 type: "string",
                 description: "message",

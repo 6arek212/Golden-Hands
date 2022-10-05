@@ -192,7 +192,7 @@ exports.getAvailableAppointments = async (req, res, next) => {
     const { workerId, workingDate, fromDate } = req.query
 
     const date = new Date(fromDate)
-    console.log(workerId, fromDate, date , workingDate);
+    console.log(workerId, fromDate, date, workingDate);
 
     try {
         const query = Appointment.find({
@@ -307,7 +307,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             })
         }
 
-        if (String(appointment.worker) !== user) {
+        if (String(appointment.worker) !== user && !req.superUser) {
             return res.status(403).json({
                 message: 'its not your appointment you cant modify it'
             })
@@ -380,7 +380,7 @@ exports.bookAppointment = async (req, res, next) => {
         }
 
 
-        if (user !== customerId && !req.worker_mode) {
+        if (user !== customerId && !req.worker_mode && !req.superUser) {
             return res.status(401).json({
                 message: 'you\'r not authorized to book an appointment for another user'
             })
@@ -471,7 +471,7 @@ exports.unbookAppointment = async (req, res, next) => {
             })
         }
 
-        if (!(String(appointment.customer) === user) && !req.worker_mode) {
+        if (!(String(appointment.customer) === user) && !req.worker_mode && !req.superUser) {
             return res.status(401).json({
                 message: 'you\'r not authorized to unbook this appointment'
             })

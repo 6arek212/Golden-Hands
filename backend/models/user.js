@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     role: { type: String, required: true, default: 'customer', enum: ['barber', 'customer'] },
+    superUser: { type: Boolean, default: null },
     image: { type: String }
 }, {
     strictPopulate: false,
