@@ -52,13 +52,13 @@ const loginTries = 10
 
 
 const createToken = (_id, type = 'auth') => {
-    time = '1d'
-    if (type == 'auth') {
-        time = '3d'
-    }
-    else if (type == 'refresh') {
-        time = '10d'
-    }
+    time = '30d'
+    // if (type == 'auth') {
+    //     time = '3d'
+    // }
+    // else if (type == 'refresh') {
+    //     time = '10d'
+    // }
 
     return jwt.sign({ _id }, process.env.SECRET, { expiresIn: time })
 }

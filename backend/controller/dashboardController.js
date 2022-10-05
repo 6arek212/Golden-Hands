@@ -3,23 +3,28 @@ const Appointment = require('../models/appointment')
 
 exports.getStats = async (req, res, next) => {
 
-    const customersCount = await User.count({ role: 'customer' })
-    const appointmentsCount = await Appointment.count()
-    const doneAppointmentsCount = await Appointment.count({ status: 'done' })
-    const pendingAppointmentsCount = await Appointment.count({ status: 'in-progress' })
-    const canceledAppointmentsCount = await Appointment.count({ status: 'canceled' })
-    const newCustomers = await User.find().where('_id').equals('fake_user')
-    // .find({ role: 'customer' }).sort({ createdAt: 'desc' }).limit(10)
+    try {
+        const customersCount = await User.count({ role: 'customer' })
+        const appointmentsCount = await Appointment.count()
+        const doneAppointmentsCount = await Appointment.count({ status: 'done' })
+        const pendingAppointmentsCount = await Appointment.count({ status: 'in-progress' })
+        const canceledAppointmentsCount = await Appointment.count({ status: 'canceled' })
+        const newCustomers = await User.find().sort({ createdAt: 'desc' }).limit(10)
+        // .find({ role: 'customer' }).sort({ createdAt: 'desc' }).limit(10)
 
-    res.status(200).json({
-        message: 'fetch success',
-        customersCount,
-        appointmentsCount,
-        newCustomers,
-        doneAppointmentsCount,
-        pendingAppointmentsCount,
-        canceledAppointmentsCount
-    })
+        res.status(200).json({
+            message: 'fetch success',
+            customersCount,
+            appointmentsCount,
+            newCustomers,
+            doneAppointmentsCount,
+            pendingAppointmentsCount,
+            canceledAppointmentsCount
+        })
+    } catch (e) {
+        next(e)
+    }
+
 }
 
 
