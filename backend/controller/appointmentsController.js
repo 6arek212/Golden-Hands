@@ -313,13 +313,12 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             })
         }
 
-        console.log();
 
-        if ((status === 'free' || status === 'hold') && appointment.customer) {
-            return res.status(400).json({
-                message: 'the appointment is booked, You can change the status to done , in-progress , didnt-come , canceled'
-            })
-        }
+        // if ((status === 'free' || status === 'hold') && appointment.customer) {
+        //     return res.status(400).json({
+        //         message: 'the appointment is booked, You can change the status to done , in-progress , didnt-come , canceled'
+        //     })
+        // }
 
         //TODO: if we want to make the appointment in-progress again we the time must not be older than today !!!!! 
         const updateOps = { status }

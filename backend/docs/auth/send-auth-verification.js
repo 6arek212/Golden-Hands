@@ -14,6 +14,24 @@ module.exports = {
                 description: "phone number", // short desc.
                 required: true
             },
+
+            {
+                name: "isSignup", // name of param
+                in: "body", // location of param
+                schema: {
+                    type: "string"
+                },
+                description: "indicates that you trying to signup", // short desc.
+            },
+
+            {
+                name: "isLogin", // name of param
+                in: "body", // location of param
+                schema: {
+                    type: "string"
+                },
+                description: "indicates that you trying to login", // short desc.
+            },
         ], // expected params.
         // expected responses
         responses: {

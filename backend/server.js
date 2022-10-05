@@ -2,7 +2,6 @@ require("dotenv").config()
 process.env.TZ = 'UTC'
 const app = require("./app");
 const http = require("http");
- 
 
 const normalizePort = val => {
   var port = parseInt(val, 10);
@@ -52,3 +51,30 @@ const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
 server.listen(port);
+
+
+
+const Appointment = require('./models/appointment')
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+const appointmentsIo = io.of('/socket/appointments')
+const appointmentStream = Appointment.watch()
+
+
+appointmentsIo.on('connection', (socket) => {
+  console.log('user connected');
+  activeUsers.add(socket);
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+
+
+appointmentStream.on('change',(change)=>{
+  console.log('change in appointments');
+  appointmentsIo.emit('change' , change)
+})
+

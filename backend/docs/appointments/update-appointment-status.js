@@ -9,7 +9,7 @@ module.exports = {
         parameters: [
             {
                 name: "appointmentId", // name of param
-                in: "param", // location of param
+                in: "body", // location of param
                 schema: {
                     type: "string",
                     description: "appointment Id", // short desc.
@@ -19,7 +19,7 @@ module.exports = {
 
             {
                 name: "status", // name of param
-                in: "param", // location of param
+                in: "body", // location of param
                 schema: {
                     type: "string",
                     description: "the appointment status , if its free then the appointment must be unbooked first", // short desc.
