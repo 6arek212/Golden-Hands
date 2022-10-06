@@ -47,7 +47,12 @@ module.exports = {
                         type: "string",
                         example: "FDSGBERFDVMXCDFB.jpg",
                         description: "User Image"
-                    }
+                    },
+                    superUser: {
+                        type: "boolean",
+                        example: "true",
+                        description: "Indicates that this is a super user"
+                    },
 
                 }
             }

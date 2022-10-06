@@ -144,9 +144,9 @@ exports.signup = async (req, res, next) => {
             message: "only super user can use this route"
         })
     }
+    
 
     try {
-
         let user = await User.findOne({ phone: phone })
 
 

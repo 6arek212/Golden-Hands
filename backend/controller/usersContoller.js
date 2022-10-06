@@ -40,7 +40,42 @@ exports.uploadUserImage = async (req, res, next) => {
 
 
 exports.getUsers = async (req, res, next) => {
-  const users = await User.find()
+  const { search } = req.query
+  const currentPage = + req.query.page
+  const pageSize = +req.query.pagesize
+  const sort = +req.query.sort
+
+  const query = User.find();
+
+  if (search) {
+    query.find({
+      $or: [
+        {
+          "$expr": {
+            "$regexMatch": {
+              "input": { "$concat": ["$firstName", " ", "$lastName"] },
+              "regex": search,  //Your text search here
+              "options": "i"
+            }
+          }
+
+        },
+        { 'phone': { $regex: "^" + search } }
+      ]
+    })
+  }
+
+
+  if (currentPage && pageSize) {
+    query.skip(pageSize * (currentPage - 1))
+      .limit(pageSize)
+  }
+
+  if(sort){
+    query.sort({createdAt: sort })
+  }
+
+  const users = await query
   res.status(200).json({
     message: 'fetch success',
     users

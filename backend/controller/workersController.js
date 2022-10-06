@@ -71,6 +71,7 @@ module.exports.insertWorkerService = async (req, res, next) => {
     const user = req.user
     console.log('----------------insertWorkerService----------------');
 
+
     if (!mongoose.Types.ObjectId.isValid(workerId)) {
         return res.status(400).json({
             message: 'worker id is not valid'
@@ -104,8 +105,6 @@ module.exports.insertWorkerService = async (req, res, next) => {
                 message: 'the worker already has this service'
             })
         }
-
-
 
 
         const service = await Service.create({

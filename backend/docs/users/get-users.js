@@ -6,6 +6,41 @@ module.exports = {
         description: "Get Users", // operation's desc.
         operationId: "getUsers", // unique operation id.
         parameters: [
+            {
+                name: "search", // name of param
+                in: "query", // location of param
+                schema: {
+                    type: "string"
+                },
+                description: "the search string, by phone or a name", // short desc.
+            },
+
+            {
+                name: "page", // name of param
+                in: "query", // location of param
+                schema: {
+                    type: "number"
+                },
+                description: "page number", // short desc.
+            },
+
+            {
+                name: "pagesize", // name of param
+                in: "query", // location of param
+                schema: {
+                    type: "number"
+                },
+                description: "page size number", // short desc.
+            },
+
+            {
+                name: "sort", // name of param
+                in: "param", // location of param
+                schema: {
+                    type: "number"
+                },
+                description: "sort the data , 1 for 'asc' -1 for 'desc'", // short desc.
+            },
 
         ], // expected params.
         // expected responses
