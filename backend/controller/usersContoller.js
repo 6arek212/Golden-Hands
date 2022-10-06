@@ -50,10 +50,11 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getUser = async (req, res, next) => {
   const userIdFromAuth = req.user
+  const { superUser } = req
   const { userId: userIdFromParam } = req.params
 
 
-  if (userIdFromAuth !== userIdFromParam && !req.worker_mode) {
+  if (userIdFromAuth !== userIdFromParam && !superUser) {
     return res.status(403).json({
       message: 'you are not authorized to make this call'
     })
@@ -76,27 +77,46 @@ exports.getUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   const { userId: userIdParam } = req.params
-  const userIdAuth = req.user
+  const { user: userIdAuth, superUser, worker_mode } = req
 
   console.log(userIdParam, userIdAuth, '--------------------', req.body);
-  if (userIdParam !== userIdAuth && !req.worker_mode) {
-    return res.status(401).json({
-      message: 'Your not allowed'
-    })
+
+
+  if (!superUser) {
+    if (userIdParam !== userIdAuth) {
+      return res.status(401).json({
+        message: 'Your not allowed'
+      })
+    }
+
+    if (req.body.superUser) {
+      return res.status(403).json({
+        message: 'Your not allowed to change your permissions'
+      })
+    }
+
+    if (req.body.role) {
+      return res.status(403).json({
+        message: 'Your not allowed to change your role'
+      })
+    }
+
+    if (req.body.phone || req.body.image) {
+      return res.status(403).json({
+        message: 'You cant update phone number or image through this route'
+      })
+    }
   }
 
-
-  if (req.body.role && !req.worker_mode) {
-    return res.status(403).json({
-      message: 'Your not allowed to change your role'
-    })
-  }
-
-
-  if (req.body.phone || req.body.image) {
-    return res.status(403).json({
-      message: 'You cant update phone number or image through this route'
-    })
+  if (superUser) {
+    if (req.body.phone) {
+      const numberExists = await User.findOne({ phone })
+      if (numberExists) {
+        return res.status(400).json({
+          message: 'the phone number already exsits'
+        })
+      }
+    }
   }
 
 
