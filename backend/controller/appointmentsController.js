@@ -329,7 +329,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
 
 
         const updatedAppointment = await Appointment.findOneAndUpdate(
-            { _id: appointmentId, worker: user },
+            { _id: appointmentId },
             { ...updateOps },
             { new: true })
             .populate('worker', 'firstName lastName phone role image')
