@@ -335,11 +335,6 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             .populate('worker', 'firstName lastName phone role image')
             .populate('customer', 'firstName lastName phone role image')
 
-        if (!updatedAppointment) {
-            return res.status(404).json({
-                message: 'appointment was not found',
-            })
-        }
 
         res.status(200).json({
             message: 'appointment status updated',
