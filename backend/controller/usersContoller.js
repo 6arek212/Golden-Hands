@@ -114,7 +114,25 @@ exports.updateUser = async (req, res, next) => {
 
 
 exports.deleteUser = async (req, res, next) => {
+  const { userId } = req.params
+  const { superUser } = req
 
+  try {
+    if (!superUser) {
+      return res.status(403).json({
+        message: 'Only super user can remove another user'
+      })
+    }
+
+    await User.deleteOne({ _id: userId })
+
+    res.status(200).json({
+      message: 'user deleted'
+    })
+
+  } catch (e) {
+    next(e)
+  }
 }
 
 
