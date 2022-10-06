@@ -137,7 +137,7 @@ exports.sendAuthVerification = async (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
     const { firstName, lastName, birthDate, phone, role } = req.body
-    const { superUser, user, } = req
+    const { superUser, user: userId } = req
 
     if (!superUser) {
         return res.status(400).json({
@@ -146,14 +146,21 @@ exports.signup = async (req, res, next) => {
     }
 
     try {
+
+        let user = await User.findOne({ phone: phone })
+
+
+        if (user) {
+            return res.status(400).json({
+                message: "user with this number already exists"
+            })
+        }
+
+
         user = await User.signup({
-            firstName, lastName, phone, birthDate,role
+            firstName, lastName, phone, birthDate, role
         })
 
-
-        //create token
-        const token = createToken(user._id, 'auth')
-        const refresh_token = createToken(user._id, 'refresh')
 
         res.status(201).json({
             message: 'signup sucess',
@@ -165,10 +172,7 @@ exports.signup = async (req, res, next) => {
                     phone: user.phone,
                     role: user.role,
                     image: user.image,
-                },
-                token,
-                refresh_token,
-                expiresIn: 3 * 24 * 60 * 60
+                }
             }
         })
     }

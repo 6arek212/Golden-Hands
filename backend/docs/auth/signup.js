@@ -76,16 +76,6 @@ module.exports = {
                                     properties: {
                                         "user": {
                                             $ref: "#/components/schemas/User"
-                                        },
-                                        token: {
-                                            type: "string",
-                                            description: "access token",
-                                            example: "SDFVGDFVBERVSDVCASCASCZXCSDFSDVSDFVSDVSDAVSDVSDVSDV",
-                                        },
-                                        refresh_token: {
-                                            type: "string",
-                                            description: "refresh access token",
-                                            example: "SDFVGDFVBERVSDVCASCASCZXCSDFSDVSDFVSDVSDAVSDVSDVSDV",
                                         }
                                     }
                                 },
