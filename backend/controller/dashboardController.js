@@ -63,7 +63,18 @@ exports.getWorkerRevenue = async (req, res, next) => {
             $group: {
                 _id: {
                     worker: "$worker",
-                    workingDate: "$workingDate"
+                    year: {
+                        $year: {
+                            date: "$workingDate",
+                            timezone: "+0300"
+                        }
+                    },
+                    month: {
+                        $month: {
+                            date: "$workingDate",
+                            timezone: "+0300"
+                        }
+                    }
                 },
                 revenue: { $sum: "$service.price" },
                 count: { $count: {} }
@@ -78,7 +89,8 @@ exports.getWorkerRevenue = async (req, res, next) => {
             $project: {
                 _id: 0,
                 worker: "$_id.worker",
-                workingDate: "$_id.workingDate",
+                year: "$_id.year",
+                month: "$_id.month",
                 revenue: "$revenue",
                 count: "$count"
             }

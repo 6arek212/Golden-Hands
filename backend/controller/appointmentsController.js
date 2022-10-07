@@ -61,7 +61,7 @@ exports.getAppointments = async (req, res, next) => {
                 .limit(pageSize)
         }
 
-        const appointments = await query.populate('worker customer', 'firstName lastName phone role')
+        const appointments = await query.populate('worker customer', 'firstName lastName phone role image')
 
         res.status(200).json({
             message: 'fetched appointments successfull',
