@@ -7,7 +7,7 @@ module.exports = {
         parameters: [
 
             {
-                name: "worker", // name of param
+                name: "workerId", // name of param
                 in: "body", // location of param
                 schema: {
                     type: "string"

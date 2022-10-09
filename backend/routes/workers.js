@@ -17,10 +17,10 @@ router.get('/', getWorkers)
 router.get('/services/:workerId', getWorkerServices)
 
 
-router.post('/services', checkFields('body', ['worker', 'price', 'title']), insertWorkerService)
+router.post('/services', requireWorkerAuth, checkFields('body', ['workerId', 'price', 'title']), insertWorkerService)
 
 
-router.delete('/services/:serviceId', checkFields('param', ['serviceId']), deleteWorkerService)
+router.delete('/services/:serviceId', requireWorkerAuth, checkFields('param', ['serviceId']), deleteWorkerService)
 
 
 router.get('/:workerId', requireAuth, getWorker)

@@ -75,19 +75,23 @@ module.exports.insertWorkerService = async (req, res, next) => {
 
     try {
         const workerDoc = await User.findOne({ _id: workerId })
+        console.log(workerDoc , workerId);
+
+
+
         if (!workerDoc) {
             return res.status(404).json({
                 message: 'worker was not found'
             })
         }
 
-        if (workerDoc.role !== 'worker') {
+        if (String(workerDoc.role) !== 'barber') {
             return res.status(400).json({
-                message: 'service can only be added for worker users'
+                message: 'service can only be added for barber users'
             })
         }
 
-        if (String(workerDoc._id) !== user && !req.superUser) {
+        if (workerId !== user && !req.superUser) {
             return res.status(403).json({
                 message: 'your not allowd to add service for another worker'
             })
