@@ -11,7 +11,7 @@ module.exports.getWorkers = async (req, res, next) => {
         const workers = await User
             .find()
             .where('role').ne('customer')
-            .select('_id firstName lastName phone role image services')
+            .select('_id firstName lastName phone role image services birthDate')
             .populate('services')
 
         const data = await User.aggregate([

@@ -152,6 +152,12 @@ exports.updateUser = async (req, res, next) => {
         })
       }
     }
+
+    if (req.body.image) {
+      return res.status(403).json({
+        message: 'You cant update image through this route'
+      })
+    }
   }
 
 

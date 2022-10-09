@@ -22,7 +22,7 @@ router.get('/', requireWorkerAuth, getAppointments)
 
 router.post('/', checkFields('body', ['worker', 'start_time', 'end_time']), requireWorkerAuth, createAppointment)
 
-router.patch('/update-status', checkFields('body', ['appointmentId']), requireWorkerAuth, updateAppointmentStatus)
+router.patch('/update-status', checkFields('body', ['appointmentId' , 'status']), requireWorkerAuth, updateAppointmentStatus)
 
 router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
 

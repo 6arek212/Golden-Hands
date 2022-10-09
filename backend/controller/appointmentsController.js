@@ -6,13 +6,17 @@ const mongoose = require('mongoose')
 
 exports.getAppointments = async (req, res, next) => {
     console.log('--------------- getAppointments requrest ----------------------------');
-    const { workerId, service, start_time, end_time, pageSize, currentPage, customerId, sort, isActive } = req.query
+    const { workerId, service, start_time, end_time, customerId, sort, status, search } = req.query
+    const pageSize = + req.query.pageSize
+    const currentPage = +  req.query.currentPage
+
+    console.log(pageSize, currentPage, start_time, end_time);
 
     const query = Appointment.find()
 
-    //isActive
-    if (isActive) {
-        query.where({ isActive: isActive })
+    //status
+    if (status) {
+        query.where({ status: status })
     }
 
     //service
@@ -49,7 +53,6 @@ exports.getAppointments = async (req, res, next) => {
     }
 
 
-
     try {
         const q1 = query.clone()
         const count = await q1.count()
@@ -61,7 +64,7 @@ exports.getAppointments = async (req, res, next) => {
                 .limit(pageSize)
         }
 
-        const appointments = await query.populate('worker customer', 'firstName lastName phone role image')
+        const appointments = await query.populate('worker customer', 'firstName lastName phone role image').sort({ start_time: sort ? sort : 'asc' })
 
         res.status(200).json({
             message: 'fetched appointments successfull',
@@ -161,6 +164,7 @@ exports.createAppointment = async (req, res, next) => {
             .where('start_time').lt(end_time)
             .where('end_time').gt(start_time)
 
+
         if (conflictingAppointments) {
             return res.status(400).json({
                 message: 'appointments conflicting'
@@ -174,6 +178,8 @@ exports.createAppointment = async (req, res, next) => {
             workingDate: date,
             status: status
         })
+
+        await appointment.populate('worker', 'firstName lastName phone role image')
 
         res.status(201).json({
             message: 'appointment created',
