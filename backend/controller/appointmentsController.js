@@ -14,6 +14,29 @@ exports.getAppointments = async (req, res, next) => {
 
     const query = Appointment.find()
 
+
+    
+    //sort 
+    if (search) {
+        // query.find({
+        //     $or: [
+        //         {
+        //             "$expr": {
+        //                 "$regexMatch": {
+        //                     "input": { "$concat": ["customer.firstName", " ", "customer.lastName"] },
+        //                     "regex": search,  //Your text search here
+        //                     "options": "i"
+        //                 }
+        //             }
+
+        //         },
+        //         { 'customer.phone': { $regex: "^" + search } }
+        //     ]
+        // })
+    }
+
+    console.log(search);
+
     //status
     if (status) {
         query.where({ status: status })
@@ -51,6 +74,7 @@ exports.getAppointments = async (req, res, next) => {
     if (sort) {
         query.sort({ start_time: sort })
     }
+
 
 
     try {

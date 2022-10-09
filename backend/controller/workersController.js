@@ -43,6 +43,7 @@ module.exports.getWorkers = async (req, res, next) => {
                     "firstName": 1,
                     "lastName": 1,
                     "phone": 1,
+                    "birthDate": 1,
                     "role": 1,
                     "createdAt": 1,
                     "image": 1,
