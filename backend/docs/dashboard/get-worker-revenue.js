@@ -47,7 +47,12 @@ module.exports = {
                                             revenue: {
                                                 type: "number"
                                             },
-
+                                            year: {
+                                                type: "number"
+                                            },
+                                            month: {
+                                                type: "number"
+                                            },
                                             count: {
                                                 type: "number"
                                             }
