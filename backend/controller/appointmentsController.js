@@ -360,7 +360,15 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         if (status === 'hold') {
             updateOps.customer = null
             updateOps.service = null
-            updateOps.service = service
+
+            const workerService = await Service.find({ title: service, worker: appointment.worker })
+            if(!workerService){
+                return res.status(403).json({
+                    message: 'the worker does not have this service'
+                })
+            }
+
+            updateOps.service = workerService
         }
 
 
