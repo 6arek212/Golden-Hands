@@ -351,6 +351,13 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         // }
 
         //TODO: if we want to make the appointment in-progress again we the time must not be older than today !!!!! 
+
+        if ((status === 'hold' || status === 'done') && !service) {
+            return res.status(403).json({
+                message: 'you cant change the status to done or hold without a service'
+            })
+        }
+
         const updateOps = { status }
         if ((status === 'free')) {
             updateOps.customer = null
@@ -363,7 +370,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
 
             const workerService = await Service.findOne({ title: service, worker: appointment.worker })
             console.log(workerService);
-            if(!workerService){
+            if (!workerService) {
                 return res.status(403).json({
                     message: 'the worker does not have this service'
                 })

@@ -33,7 +33,7 @@ exports.getWorkerRevenue = async (req, res, next) => {
 
     const $match =
     {
-        status: 'in-progress'
+        status: 'done'
     }
 
     if (workerId) {
@@ -46,14 +46,12 @@ exports.getWorkerRevenue = async (req, res, next) => {
         },
 
         {
-
             $lookup: {
                 from: 'users',
                 localField: 'worker',
                 foreignField: '_id',
                 as: 'worker'
             }
-
         },
         {
             $unwind: "$worker"
