@@ -352,7 +352,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
 
         //TODO: if we want to make the appointment in-progress again we the time must not be older than today !!!!! 
 
-        if ((status === 'hold' || status === 'done') && !service) {
+        if ((status === 'hold' || status === 'done') && !appointment.service && !service) {
             return res.status(403).json({
                 message: 'you cant change the status to done or hold without a service'
             })
