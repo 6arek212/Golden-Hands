@@ -41,7 +41,7 @@ exports.uploadUserImage = async (req, res, next) => {
 
 exports.getUsers = async (req, res, next) => {
   const { search } = req.query
-  const currentPage = + req.query.page
+  const currentPage = + req.query.currentPage
   const pageSize = +req.query.pagesize
   const sort = +req.query.sort
 
@@ -71,14 +71,27 @@ exports.getUsers = async (req, res, next) => {
       .limit(pageSize)
   }
 
-  if(sort){
-    query.sort({createdAt: sort })
+  if (sort) {
+    query.sort({ createdAt: sort })
+  } 
+  else {
+    query.sort({ createdAt: -1 })
   }
+
+
+  const date = new Date()
+  date.setMonth(date.getMonth() - 1)
+
+  const usersCount = await User.count()
+  const newUsersCount = await User.count().where('createdAt').gte(date)
+
 
   const users = await query
   res.status(200).json({
     message: 'fetch success',
-    users
+    users,
+    count: usersCount,
+    newUsersCount: newUsersCount
   })
 }
 

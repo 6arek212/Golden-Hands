@@ -15,7 +15,7 @@ exports.getAppointments = async (req, res, next) => {
     const query = Appointment.find()
 
 
-    
+
     //sort 
     if (search) {
         // query.find({
@@ -321,7 +321,7 @@ const statusEnum = ['done', 'in-progress', 'didnt-come', 'canceled', 'free', 'ho
 
 exports.updateAppointmentStatus = async (req, res, next) => {
     try {
-        const { appointmentId, status } = req.body
+        const { appointmentId, status, service } = req.body
         const user = req.user
 
         if (!(statusEnum.includes(status))) {
@@ -352,9 +352,15 @@ exports.updateAppointmentStatus = async (req, res, next) => {
 
         //TODO: if we want to make the appointment in-progress again we the time must not be older than today !!!!! 
         const updateOps = { status }
-        if ((status === 'free' || status === 'hold')) {
+        if ((status === 'free')) {
             updateOps.customer = null
             updateOps.service = null
+        }
+
+        if (status === 'hold') {
+            updateOps.customer = null
+            updateOps.service = null
+            updateOps.service = service
         }
 
 

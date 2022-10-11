@@ -16,12 +16,12 @@ module.exports = {
             },
 
             {
-                name: "page", // name of param
+                name: "currentPage", // name of param
                 in: "query", // location of param
                 schema: {
                     type: "number"
                 },
-                description: "page number", // short desc.
+                description: "current page number", // short desc.
             },
 
             {
