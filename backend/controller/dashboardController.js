@@ -60,7 +60,7 @@ exports.getWorkerRevenue = async (req, res, next) => {
         {
             $group: {
                 _id: {
-                    worker: "$worker",
+                    // worker: "$worker",
                     year: {
                         $year: {
                             date: "$workingDate",
