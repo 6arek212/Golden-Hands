@@ -361,7 +361,8 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             updateOps.customer = null
             updateOps.service = null
 
-            const workerService = await Service.find({ title: service, worker: appointment.worker })
+            const workerService = await Service.findOne({ title: service, worker: appointment.worker })
+            console.log(workerService);
             if(!workerService){
                 return res.status(403).json({
                     message: 'the worker does not have this service'
