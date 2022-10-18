@@ -5,6 +5,7 @@ const updateAppointmentStatus = require('./update-appointment-status');
 const deleteAppointment = require('./delete-appointment');
 const bookAppointment = require('./book-appointment');
 const unbookAppointment = require('./unbook-appointment');
+const createRangeAppointments = require('./create-range-appointments');
 
 
 module.exports = {
@@ -12,7 +13,9 @@ module.exports = {
         ...getAppointments,
         ...createAppointment
     },
-
+    '/range-appointments': {
+        ...createRangeAppointments
+    },
     '/api/appointments/update-status': {
         ...updateAppointmentStatus
     },
@@ -27,4 +30,5 @@ module.exports = {
     '/api/appointments/unbook': {
         ...unbookAppointment
     },
+
 }
