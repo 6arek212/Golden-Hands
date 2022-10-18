@@ -43,6 +43,5 @@ const whatsapp = () => {
         }
     }
 }
-whatsapp().sendMessage('0525145565', 'appointment_approaching')
 
 module.exports = whatsapp()

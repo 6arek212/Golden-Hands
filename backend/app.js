@@ -60,7 +60,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(docs));
 
 
 
-const htmlPath = path.join(__dirname, 'html')
+const htmlPath = path.join(__dirname, 'public')
 app.use(express.static(htmlPath));
 
 app.use('/', (req, res, next) => {

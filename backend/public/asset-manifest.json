@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.fca9adf4.css",
+    "main.js": "/static/js/main.45e3e1f3.js",
+    "static/media/barberStyle.png": "/static/media/barberStyle.8839ef15690a495c5cda.png",
+    "static/media/logobarb.png": "/static/media/logobarb.b42ea16ae2ee6c18f547.png",
+    "static/media/percentage.png": "/static/media/percentage.b94919cf133859d1daee.png",
+    "static/media/calendar2.png": "/static/media/calendar2.858ddb88018527da8c6e.png",
+    "static/media/employee.png": "/static/media/employee.cd1778ad2990c67d6655.png",
+    "static/media/cd-scetch.png": "/static/media/cd-scetch.39748a0cf05c0adb089b.png",
+    "static/media/delivery-cancelled.png": "/static/media/delivery-cancelled.1b7eca8fc3321452357b.png",
+    "static/media/service.png": "/static/media/service.4c4c9a01d39fe7cd4b12.png",
+    "static/media/delivery-box.png": "/static/media/delivery-box.ade94cb9f69f3b771539.png",
+    "static/media/pending.png": "/static/media/pending.5158320fda6018e63c96.png",
+    "index.html": "/index.html",
+    "main.fca9adf4.css.map": "/static/css/main.fca9adf4.css.map",
+    "main.45e3e1f3.js.map": "/static/js/main.45e3e1f3.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fca9adf4.css",
+    "static/js/main.45e3e1f3.js"
+  ]
+}
