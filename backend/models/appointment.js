@@ -1,4 +1,7 @@
 const mongoose = require('mongoose')
+const moment = require('moment')
+const twilio = require('../utils/twilio')
+const whatsapp = require('../utils/whatsapp')
 
 
 const serviceSchema = new mongoose.Schema({
@@ -28,4 +31,53 @@ const appointmentSchema = new mongoose.Schema({
         timestamps: true
     })
 
-module.exports = mongoose.model('appointment', appointmentSchema)
+
+
+const reminderTime = 30
+
+appointmentSchema.methods.requiresNotification = function (date) {
+    return Math.round(moment.duration(moment(this.start_time).diff(moment(date).utc())).asMinutes()) === reminderTime;
+};
+
+
+
+appointmentSchema.statics.sendNotifications = function (callback) {
+    // now
+    const searchDate = new Date();
+    Appointment
+        .find()
+        .where('status')
+        .equals('in-progress')
+        .where('start_time')
+        .gte(searchDate)
+        .populate('worker customer')
+        .then(function (appointments) {
+            appointments = appointments.filter(function (appointment) {
+                return appointment.requiresNotification(searchDate);
+            });
+            if (appointments.length > 0) {
+                sendNotifications(appointments);
+            }
+        });
+
+    /**
+    * Send messages to all appoinment owners via Twilio
+    * @param {array} appointments List of appointments.
+    */
+    function sendNotifications(appointments) {
+        console.log('sending notifiaction',appointments);
+        appointments.forEach(function (appointment) {
+            whatsapp.sendMessage(appointment.customer.phone , 'appointment_approaching')
+        });
+
+        // Don't wait on success/failure, just indicate all messages have been
+        // queued for delivery
+        if (callback) {
+            callback.call();
+        }
+    }
+};
+
+
+const Appointment = mongoose.model('appointment', appointmentSchema);
+module.exports = Appointment;

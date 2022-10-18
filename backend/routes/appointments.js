@@ -1,5 +1,4 @@
 const router = require('express').Router()
-const required_fields = require('../middleware/check_fields')
 const checkFields = require('../middleware/check_fields')
 const { getAppointments,
     // updateAppointment,
@@ -11,6 +10,7 @@ const { getAppointments,
     createAppointment,
     getUserAppointment,
     getUserAppointments,
+    createRangeAppointments
 } = require('../controller/appointmentsController')
 
 
@@ -22,7 +22,9 @@ router.get('/', requireWorkerAuth, getAppointments)
 
 router.post('/', checkFields('body', ['worker', 'start_time', 'end_time']), requireWorkerAuth, createAppointment)
 
-router.patch('/update-status', checkFields('body', ['appointmentId' , 'status']), requireWorkerAuth, updateAppointmentStatus)
+router.post('/range-appointments', checkFields('body', ['worker', 'start_time', 'end_time', 'interval']), requireWorkerAuth, createRangeAppointments)
+
+router.patch('/update-status', checkFields('body', ['appointmentId', 'status']), requireWorkerAuth, updateAppointmentStatus)
 
 router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
 
@@ -32,7 +34,7 @@ router.delete('/', async (req, res) => {
     await App.deleteMany()
 
     res.json({
-        
+
     })
 
 })
@@ -56,4 +58,6 @@ router.get('/available', checkFields('query', ['workerId']), requireAuth, getAva
 
 
 module.exports = router
+
+
 

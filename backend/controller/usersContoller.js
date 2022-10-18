@@ -1,4 +1,6 @@
 const User = require('../models/user')
+const Appointment = require('../models/appointment')
+const mongoose = require('mongoose')
 const fs = require('fs')
 const path = require('path')
 
@@ -73,7 +75,7 @@ exports.getUsers = async (req, res, next) => {
 
   if (sort) {
     query.sort({ createdAt: sort })
-  } 
+  }
   else {
     query.sort({ createdAt: -1 })
   }
@@ -101,7 +103,6 @@ exports.getUser = async (req, res, next) => {
   const { superUser } = req
   const { userId: userIdFromParam } = req.params
 
-
   if (userIdFromAuth !== userIdFromParam && !superUser) {
     return res.status(403).json({
       message: 'you are not authorized to make this call'
@@ -109,16 +110,39 @@ exports.getUser = async (req, res, next) => {
   }
 
 
-  const user = await User.findOne({ _id: userIdFromParam }).select('firstName lastName phone role image')
+  const user = await User.findOne({ _id: userIdFromParam })
   if (!user) {
     return res.status(400).json({
       message: 'You need to signup'
     })
   }
 
+
+
+  const appointmentCount = await Appointment.count({ customer: userIdFromParam })
+  const paid = await Appointment.aggregate([
+    {
+      $match: {
+        customer: mongoose.Types.ObjectId(userIdFromParam)
+      }
+    },
+    {
+      $group: {
+        _id: {
+          customer: '$customer'
+        },
+        revenue: { $sum: "$service.price" }
+      }
+    }
+  ])
+
+
+
   res.status(200).json({
     message: 'fetch success',
-    user
+    user,
+    appointmentCount,
+    paid: paid[0] ? paid[0].revenue : 0
   })
 }
 
@@ -140,6 +164,12 @@ exports.updateUser = async (req, res, next) => {
     if (req.body.superUser) {
       return res.status(403).json({
         message: 'Your not allowed to change your permissions'
+      })
+    }
+
+    if (req.body.isBlocked) {
+      return res.status(403).json({
+        message: 'Your not allowed to change your block status'
       })
     }
 

@@ -63,13 +63,13 @@ exports.getWorkerRevenue = async (req, res, next) => {
                     // worker: "$worker",
                     year: {
                         $year: {
-                            date: "$workingDate",
+                            date: "$start_time",
                             timezone: "+0300"
                         }
                     },
                     month: {
                         $month: {
-                            date: "$workingDate",
+                            date: "$start_time",
                             timezone: "+0300"
                         }
                     }

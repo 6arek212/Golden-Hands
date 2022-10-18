@@ -53,7 +53,6 @@ server.on("listening", onListening);
 server.listen(port);
 
 
-
 const Appointment = require('./models/appointment')
 const { Server } = require("socket.io");
 const io = new Server(server);

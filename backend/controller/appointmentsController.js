@@ -2,7 +2,7 @@ const Appointment = require('../models/appointment')
 const User = require('../models/user')
 const { Service } = require('../models/service')
 const mongoose = require('mongoose')
-
+const whatsapp = require('../utils/whatsapp')
 
 exports.getAppointments = async (req, res, next) => {
     console.log('--------------- getAppointments requrest ----------------------------');
@@ -88,7 +88,7 @@ exports.getAppointments = async (req, res, next) => {
                 .limit(pageSize)
         }
 
-        const appointments = await query.populate('worker customer', 'firstName lastName phone role image').sort({ start_time: sort ? sort : 'asc' })
+        const appointments = await query.populate('worker customer').sort({ start_time: sort ? sort : 'asc' })
 
         res.status(200).json({
             message: 'fetched appointments successfull',
@@ -101,6 +101,75 @@ exports.getAppointments = async (req, res, next) => {
 }
 
 
+
+const getAppointmentsListFromRange = (worker, startDate, endDate, workingDate, interval = 30) => {
+    var date1 = new Date(startDate)
+    const list = []
+
+
+    const diffTime = Math.abs(startDate - endDate);
+    const hourDiff = diffTime / (1000 * 60);
+
+    const numberOfAppointments = parseInt(hourDiff / interval)
+
+    console.log(numberOfAppointments);
+    const date2 = new Date(date1)
+    date2.setMinutes(date2.getMinutes() + interval)
+
+    for (var i = 0; i < numberOfAppointments; i++) {
+
+        list.push({
+            worker: worker,
+            start_time: new Date(date1),
+            end_time: new Date(date2),
+            workingDate: workingDate
+        })
+        date1.setMinutes(date1.getMinutes() + interval)
+        date2.setMinutes(date2.getMinutes() + interval)
+    }
+
+    return list
+}
+
+exports.createRangeAppointments = async (req, res, next) => {
+
+    const { worker, start_time, end_time, interval, status } = req.body
+
+    const timezone = start_time.substring(start_time.length - 5)
+    const workingDate = new Date(start_time.split('T')[0] + 'T00:00:00' + timezone)
+
+    const maxEndDate = new Date(workingDate)
+    maxEndDate.setDate(maxEndDate.getDate() + 1)
+    console.log('workingDate', workingDate, 'end working date', maxEndDate);
+
+
+
+    const s_time = new Date(start_time)
+    const e_time = new Date(end_time)
+
+    // validate start and end time
+    console.log('s_time', s_time, 'e_time date', e_time);
+
+
+    // make all appointments
+    const appointmentsList = getAppointmentsListFromRange(worker, s_time, e_time, workingDate, interval)
+
+    console.log(appointmentsList);
+
+    // insert all 
+
+    try {
+        const result = await Appointment.insertMany(appointmentsList)
+
+        res.status(200).json({
+            message: 'appointments created',
+            appointments: result
+        })
+    }
+    catch (e) {
+        next(e)
+    }
+}
 
 exports.createAppointment = async (req, res, next) => {
 
@@ -120,7 +189,7 @@ exports.createAppointment = async (req, res, next) => {
         const date = new Date(start_time.split('T')[0] + 'T00:00:00' + timezone)
 
         console.log('create appointment __date__', date, '__start__',
-            s_time, '__end__', e_time);
+            s_time, '__end__', e_time)
 
 
         // check if the worker is valid
@@ -203,7 +272,7 @@ exports.createAppointment = async (req, res, next) => {
             status: status
         })
 
-        await appointment.populate('worker', 'firstName lastName phone role image')
+        await appointment.populate('worker')
 
         res.status(201).json({
             message: 'appointment created',
@@ -217,7 +286,7 @@ exports.createAppointment = async (req, res, next) => {
 
 
 
-
+//TODO: GET APPOINTMENTS FROM DATE TILL THE END OF THE DAY  
 exports.getAvailableAppointments = async (req, res, next) => {
     const { workerId, workingDate, fromDate } = req.query
 
@@ -254,8 +323,8 @@ exports.getUserAppointment = async (req, res, next) => {
     const user = req.user
     try {
         const appointment = await Appointment.findOne({ customer: user, status: 'in-progress' })
-            .populate('customer', 'firstName lastName phone role image')
-            .populate('worker', 'firstName lastName phone role image')
+            .populate('customer')
+            .populate('worker')
 
         res.status(200).json({
             message: 'fetched appointment successfull',
@@ -273,8 +342,8 @@ exports.getUserAppointments = async (req, res, next) => {
     const user = req.user
     try {
         const appointments = await Appointment.find({ customer: user })
-            .populate('customer', 'firstName lastName phone role image')
-            .populate('worker', 'firstName lastName phone role image').sort({ 'status': 'desc' })
+            .populate('customer')
+            .populate('worker').sort({ 'status': 'desc' })
 
         res.status(200).json({
             message: 'fetched appointment successfull',
@@ -344,19 +413,32 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         }
 
 
-        // if ((status === 'free' || status === 'hold') && appointment.customer) {
-        //     return res.status(400).json({
-        //         message: 'the appointment is booked, You can change the status to done , in-progress , didnt-come , canceled'
+        console.log(service, status);
+        if (status === 'hold' && !appointment.service && !service) {
+            return res.status(403).json({
+                message: 'you cant change the status to hold without a service'
+            })
+        }
+
+        // if we want to make the appointment in-progress again , the time must not be older than today !!!!! 
+
+        // const start_time = new Date(appointment.start_time)
+        // start_time.setMinutes(start_time.getMinutes() + 30)
+        // const current_time = new Date()
+
+        // if ((status === 'in-progress' ||  status === 'hold') && current_time > start_time) {
+        //     return res.status(403).json({
+        //         message: 'you cant change the status to free , in-progress or hold for and old appointment'
         //     })
         // }
 
-        //TODO: if we want to make the appointment in-progress again we the time must not be older than today !!!!! 
-
-        if ((status === 'hold' || status === 'done') && !appointment.service && !service) {
+        if ((status === 'done' || status === 'in-progress') && !appointment.service) {
             return res.status(403).json({
-                message: 'you cant change the status to done or hold without a service'
+                message: 'you cant change the status to done or in-progress without a service'
             })
         }
+
+
 
         const updateOps = { status }
         if ((status === 'free')) {
@@ -365,6 +447,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         }
 
         if (status === 'hold') {
+            //TODO: HANDLE CUSTOMER 
             updateOps.customer = null
             updateOps.service = null
 
@@ -384,8 +467,8 @@ exports.updateAppointmentStatus = async (req, res, next) => {
             { _id: appointmentId },
             { ...updateOps },
             { new: true })
-            .populate('worker', 'firstName lastName phone role image')
-            .populate('customer', 'firstName lastName phone role image')
+            .populate('worker')
+            .populate('customer')
 
 
         res.status(200).json({
@@ -466,8 +549,8 @@ exports.bookAppointment = async (req, res, next) => {
 
 
         console.log(serviceDoc);
-
-
+        const userDoc = await User.findOne({ _id: customerId })
+        whatsapp.sendMessage(userDoc.phone, 'booked')
 
         const appointment = await Appointment.findOneAndUpdate(
             { _id: appointmentId, customer: null, status: 'free' },

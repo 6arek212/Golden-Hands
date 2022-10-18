@@ -2,6 +2,7 @@ const User = require('../models/user')
 const Verify = require('../models/verify')
 const jwt = require('jsonwebtoken')
 
+const whatsapp = require('../utils/whatsapp')
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -111,14 +112,19 @@ exports.sendAuthVerification = async (req, res, next) => {
         })
 
 
-        client.messages
-            .create({
-                body: 'מספרת אברהים ,' + '\n' + 'הקוד שלך הוא :' + '\n#' + code + '\n' + `צריך להזין אותו באפליקציה שלנו`,
-                messagingServiceSid: 'MG91cc7f21e93e935e4de2d16a90c4b45d',
-                to: '+972' + phone
-            })
-            .then(message => console.log(message.sid))
-            .catch(e => console.log('sending message error:', e))
+        // client.messages
+        //     .create({
+        //         body: 'מספרת אברהים ,' + '\n' + 'הקוד שלך הוא :' + '\n#' + code + '\n' + `צריך להזין אותו באפליקציה שלנו`,
+        //         messagingServiceSid: 'MG91cc7f21e93e935e4de2d16a90c4b45d',
+        //         to: '+972' + phone
+        //     })
+        //     .then(message => console.log(message.sid))
+        //     .catch(e => console.log('sending message error:', e))
+
+        whatsapp.sendMessage(phone , 'code2' , [{
+            type: 'text',
+            text: `${code}`
+        }])
 
 
         res.status(201).json({
@@ -144,7 +150,7 @@ exports.signup = async (req, res, next) => {
             message: "only super user can use this route"
         })
     }
-    
+
 
     try {
         let user = await User.findOne({ phone: phone })

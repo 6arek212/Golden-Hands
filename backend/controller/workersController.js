@@ -75,7 +75,7 @@ module.exports.insertWorkerService = async (req, res, next) => {
 
     try {
         const workerDoc = await User.findOne({ _id: workerId })
-        console.log(workerDoc , workerId);
+        console.log(workerDoc, workerId);
 
 
 
@@ -206,7 +206,6 @@ module.exports.getWorker = async (req, res, next) => {
         const worker = await User
             .findOne({ _id: workerId })
             .where('role').ne('customer')
-            .select('_id firstName lastName phone role image')
 
 
         if (!worker) {
@@ -272,5 +271,6 @@ module.exports.getWorkingDates = async (req, res, next) => {
         next(e)
     }
 }
+
 
 
