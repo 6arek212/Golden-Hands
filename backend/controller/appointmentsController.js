@@ -10,76 +10,107 @@ exports.getAppointments = async (req, res, next) => {
     const pageSize = + req.query.pageSize
     const currentPage = +  req.query.currentPage
 
-    console.log(pageSize, currentPage, start_time, end_time);
+    console.log(workerId, search, pageSize, currentPage, start_time, end_time);
 
-    const query = Appointment.find()
+    // const query = Appointment
+    //     .find()
+    //     .populate('worker customer')
 
 
-
-    //sort 
-    if (search) {
-        // query.find({
-        //     $or: [
-        //         {
-        //             "$expr": {
-        //                 "$regexMatch": {
-        //                     "input": { "$concat": ["customer.firstName", " ", "customer.lastName"] },
-        //                     "regex": search,  //Your text search here
-        //                     "options": "i"
-        //                 }
-        //             }
-
-        //         },
-        //         { 'customer.phone': { $regex: "^" + search } }
-        //     ]
-        // })
-    }
-
-    console.log(search);
-
-    //status
-    if (status) {
-        query.where({ status: status })
-    }
-
-    //service
-    if (service) {
-        query.where({ service: service })
-    }
+    const query = Appointment.aggregate()
 
     //barber
     if (workerId) {
-        query.where({ worker: workerId })
+        query.match({
+            'worker': new mongoose.Types.ObjectId(workerId)
+        })
     }
 
 
     //customer
     if (customerId) {
-        query.where({ customer: customerId })
+        query.match({
+            'customer': new mongoose.Types.ObjectId(customerId)
+        })
     }
+
+
+    query.lookup({
+        from: 'users',
+        localField: 'worker',
+        foreignField: '_id',
+        as: 'worker'
+    })
+        .lookup({
+            from: 'users',
+            localField: 'customer',
+            foreignField: '_id',
+            as: 'customer'
+        })
+        .unwind({
+            "path": "$worker",
+            "preserveNullAndEmptyArrays": true
+        })
+        .unwind({
+            "path": "$customer",
+            "preserveNullAndEmptyArrays": true
+        })
+
+
+    //sort 
+    if (search) {
+        query
+            .addFields({
+                fullName: { $concat: ['$customer.firstName', ' ', '$customer.lastName'] }
+            })
+            .match({
+                $or: [
+                    { 'fullName': { $regex: search, $options: "i" } },
+                    { 'customer.phone': { $regex: search, $options: "i" } }
+                ]
+            })
+    }
+
+
+    //status
+    if (status) {
+        query.match({
+            status: status
+        })
+    }
+
+    //service
+    if (service) {
+        query.match({
+            service: service
+        })
+    }
+
+
 
 
     //start time constrian
     if (start_time) {
-        query.where('start_time').gt(new Date(start_time))
+        query.match({
+            start_time: { $gte: new Date(start_time) }
+        })
     }
 
 
     //end time constrain
     if (end_time) {
-        query.where('end_time').lt(new Date(end_time))
+        query.match({
+            end_time: { $lt: new Date(end_time) }
+        })
     }
 
-    //sort 
-    if (sort) {
-        query.sort({ start_time: sort })
-    }
+
 
 
 
     try {
-        const q1 = query.clone()
-        const count = await q1.count()
+        // const q1 = query.clone()
+        // const count = await q1.count()
 
 
         //paging
@@ -88,12 +119,14 @@ exports.getAppointments = async (req, res, next) => {
                 .limit(pageSize)
         }
 
-        const appointments = await query.populate('worker customer').sort({ start_time: sort ? sort : 'asc' })
+
+        const appointments = await query.sort({ start_time: sort ? sort : 1 })
+
 
         res.status(200).json({
             message: 'fetched appointments successfull',
-            appointments,
-            count
+            appointments: appointments,
+            // count
         })
     } catch (e) {
         next(e)
