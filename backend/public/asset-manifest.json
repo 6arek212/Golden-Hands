@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.fca9adf4.css",
-    "main.js": "/static/js/main.94b0d2fc.js",
+    "main.css": "/static/css/main.ec36c8f4.css",
+    "main.js": "/static/js/main.0ab52414.js",
     "static/media/barberStyle.png": "/static/media/barberStyle.8839ef15690a495c5cda.png",
     "static/media/logobarb.png": "/static/media/logobarb.b42ea16ae2ee6c18f547.png",
     "static/media/percentage.png": "/static/media/percentage.b94919cf133859d1daee.png",
@@ -13,11 +13,11 @@
     "static/media/delivery-box.png": "/static/media/delivery-box.ade94cb9f69f3b771539.png",
     "static/media/pending.png": "/static/media/pending.5158320fda6018e63c96.png",
     "index.html": "/index.html",
-    "main.fca9adf4.css.map": "/static/css/main.fca9adf4.css.map",
-    "main.94b0d2fc.js.map": "/static/js/main.94b0d2fc.js.map"
+    "main.ec36c8f4.css.map": "/static/css/main.ec36c8f4.css.map",
+    "main.0ab52414.js.map": "/static/js/main.0ab52414.js.map"
   },
   "entrypoints": [
-    "static/css/main.fca9adf4.css",
-    "static/js/main.94b0d2fc.js"
+    "static/css/main.ec36c8f4.css",
+    "static/js/main.0ab52414.js"
   ]
 }
