@@ -57,12 +57,12 @@ const createToken = (_id, type = 'auth') => {
     const date = new Date()
 
     if (type == 'auth') {
-        time = '20s'
-        date.setSeconds(date.getSeconds() + 20)
+        time = '7d'
+        date.setDate(date.getDate() + 7)
     }
     else if (type == 'refresh') {
-        time = '1m'
-        date.setMinutes(date.getMinutes() + 1)
+        time = '30d'
+        date.setDate(date.getDate() + 30)
     }
 
     return {
