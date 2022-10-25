@@ -330,7 +330,7 @@ exports.refreshToken = async (req, res, next) => {
 
         const { _id } = await jwt.verify(refreshToken, process.env.SECRET)
 
-        const { token: newtoken, expireDate } = createToken(user._id, 'auth')
+        const { token: newtoken, expireDate } = createToken(_id, 'auth')
 
         res.status(200).json({
             message: 'token refreshed',
