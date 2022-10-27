@@ -188,7 +188,7 @@ exports.updateUser = async (req, res, next) => {
 
   if (superUser) {
     if (req.body.phone) {
-      const numberExists = await User.findOne({ phone })
+      const numberExists = await User.findOne({ phone: req.body.phone })
       if (numberExists) {
         return res.status(400).json({
           message: 'the phone number already exsits'
@@ -203,15 +203,17 @@ exports.updateUser = async (req, res, next) => {
     }
   }
 
+  try {
+    const user = await User.findOneAndUpdate({ _id: userIdParam }, { ...req.body }, { runValidators: true, returnOriginal: false })
 
-  const user = await User.findOneAndUpdate({ _id: userIdParam }, { ...req.body }, { runValidators: true, returnOriginal: false })
-
-  console.log(user);
-  res.status(200).json({
-    message: 'update success',
-    user
-  })
-
+    console.log(user);
+    res.status(200).json({
+      message: 'update success',
+      user
+    })
+  } catch (e) {
+    next(e)
+  }
 }
 
 
