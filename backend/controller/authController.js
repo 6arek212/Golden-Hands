@@ -54,14 +54,21 @@ const loginTries = 10
 
 const createToken = (_id, type = 'auth') => {
     time = '30d'
-    // if (type == 'auth') {
-    //     time = '3d'
-    // }
-    // else if (type == 'refresh') {
-    //     time = '10d'
-    // }
+    const date = new Date()
 
-    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: time })
+    if (type == 'auth') {
+        time = '7d'
+        date.setDate(date.getDate() + 7)
+    }
+    else if (type == 'refresh') {
+        time = '30d'
+        date.setDate(date.getDate() + 30)
+    }
+
+    return {
+        token: jwt.sign({ _id }, process.env.SECRET, { expiresIn: time }),
+        expireDate: date
+    }
 }
 
 
@@ -121,7 +128,7 @@ exports.sendAuthVerification = async (req, res, next) => {
         //     .then(message => console.log(message.sid))
         //     .catch(e => console.log('sending message error:', e))
 
-        whatsapp.sendMessage(phone , 'code2' , [{
+        whatsapp.sendMessage(phone, 'code2', [{
             type: 'text',
             text: `${code}`
         }])
@@ -225,8 +232,8 @@ exports.verifyAndSignup = async (req, res, next) => {
 
 
         //create token
-        const token = createToken(user._id, 'auth')
-        const refresh_token = createToken(user._id, 'refresh')
+        const { token, expireDate } = createToken(user._id, 'auth')
+        const { token: refresh_token, expireDate: expireDateRefreshToken } = createToken(user._id, 'refresh')
 
         res.status(201).json({
             message: 'signup sucess',
@@ -241,7 +248,9 @@ exports.verifyAndSignup = async (req, res, next) => {
                 },
                 token,
                 refresh_token,
-                expiresIn: 3 * 24 * 60 * 60
+                expiresIn: 3 * 24 * 60 * 60,
+                expireDateRefreshToken: expireDateRefreshToken,
+                expireDate: expireDate
             }
         })
     } catch (e) {
@@ -275,8 +284,8 @@ exports.verifyAndLogin = async (req, res, next) => {
         // console.log('aaaaaaaaa');
 
         //create token
-        const token = createToken(user._id, 'auth')
-        const refresh_token = createToken(user._id, 'refresh')
+        const { token, expireDate } = createToken(user._id, 'auth')
+        const { token: refresh_token, expireDate: expireDateRefreshToken } = createToken(user._id, 'refresh')
 
 
         res.status(200).json({
@@ -293,7 +302,9 @@ exports.verifyAndLogin = async (req, res, next) => {
                 },
                 token,
                 refresh_token,
-                expiresIn: 3 * 24 * 60 * 60
+                expiresIn: 3 * 24 * 60 * 60,
+                expireDateRefreshToken: expireDateRefreshToken,
+                expireDate: expireDate
             }
         })
 
@@ -319,11 +330,12 @@ exports.refreshToken = async (req, res, next) => {
 
         const { _id } = await jwt.verify(refreshToken, process.env.SECRET)
 
-        const newtoken = createToken(_id, 'auth')
+        const { token: newtoken, expireDate } = createToken(_id, 'auth')
 
         res.status(200).json({
             message: 'token refreshed',
-            token: newtoken
+            token: newtoken,
+            expireDate: expireDate
         })
 
     } catch (e) {
