@@ -245,6 +245,7 @@ exports.verifyAndSignup = async (req, res, next) => {
                     phone: user.phone,
                     role: user.role,
                     image: user.image,
+                    birthDate: user.birthDate
                 },
                 token,
                 refresh_token,
@@ -298,6 +299,7 @@ exports.verifyAndLogin = async (req, res, next) => {
                     phone: user.phone,
                     role: user.role,
                     image: user.image,
+                    birthDate: user.birthDate
 
                 },
                 token,
