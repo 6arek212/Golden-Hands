@@ -146,26 +146,26 @@ exports.getUser = async (req, res, next) => {
     {
       $group: {
         _id: {
-          customer: '$worker'
+          worker: '$worker'
         },
         count: { $count: {} }
       }
     },
     {
       $addFields: {
-        customer: '$_id.customer'
+        worker: '$_id.worker'
       }
     },
     {
       $lookup: {
         from: 'users',
-        localField: 'customer',
+        localField: 'worker',
         foreignField: '_id',
-        as: 'customer'
+        as: 'worker'
       }
     },
     {
-      $unwind: '$customer'
+      $unwind: '$worker'
     },
     {
       $sort: { count: -1 }
