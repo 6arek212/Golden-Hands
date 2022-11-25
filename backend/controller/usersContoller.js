@@ -137,6 +137,28 @@ exports.getUser = async (req, res, next) => {
   ])
 
 
+  const rating = await Appointment.aggregate([
+    {
+      $match: {
+        customer: mongoose.Types.ObjectId(userIdFromParam)
+      }
+    },
+    {
+      $group: {
+        _id: '$customer',
+        ratingAvg: { $avg: '$rating' }
+      }
+    },
+
+    {
+      $project: {
+        _id: 0
+      }
+    }
+
+  ])
+
+
   const preferredWorkers = await Appointment.aggregate([
     {
       $match: {
@@ -187,9 +209,12 @@ exports.getUser = async (req, res, next) => {
     user,
     appointmentCount,
     paid: paid[0] ? paid[0].revenue : 0,
-    preferredWorkers
+    preferredWorkers,
+    rating: rating ? rating[0].ratingAvg : null
   })
 }
+
+
 
 
 exports.updateUser = async (req, res, next) => {

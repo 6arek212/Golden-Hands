@@ -25,6 +25,11 @@ const appointmentSchema = new mongoose.Schema({
     start_time: { type: Date, required: true },
     end_time: { type: Date, required: true },
     service: { type: serviceSchema },
+    rating: {
+        type: Number,
+        min: [1, 'Rating must be above 1.0'],
+        max: [5, 'Rating must be below 5.0'],
+    },
     status: { type: String, enum: ['done', 'in-progress', 'didnt-come', 'canceled', 'free', 'hold'], default: 'free' }
 },
     {
@@ -65,9 +70,9 @@ appointmentSchema.statics.sendNotifications = function (callback) {
     * @param {array} appointments List of appointments.
     */
     function sendNotifications(appointments) {
-        console.log('sending notifiaction',appointments);
+        console.log('sending notifiaction', appointments);
         appointments.forEach(function (appointment) {
-            whatsapp.sendMessage(appointment.customer.phone , 'appointment_approaching')
+            whatsapp.sendMessage(appointment.customer.phone, 'appointment_approaching')
         });
 
         // Don't wait on success/failure, just indicate all messages have been
