@@ -212,7 +212,7 @@ exports.getUser = async (req, res, next) => {
       appointmentCount,
       paid: paid[0] ? paid[0].revenue : 0,
       preferredWorkers,
-      rating: rating ? rating[0].ratingAvg : null
+      rating: rating && rating[0] ? rating[0].ratingAvg : null
     })
   } catch (e) {
     console.log(e);
