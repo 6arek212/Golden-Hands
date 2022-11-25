@@ -140,7 +140,8 @@ exports.getUser = async (req, res, next) => {
   const rating = await Appointment.aggregate([
     {
       $match: {
-        customer: mongoose.Types.ObjectId(userIdFromParam)
+        customer: mongoose.Types.ObjectId(userIdFromParam),
+        status: 'done'
       }
     },
     {
