@@ -117,102 +117,107 @@ exports.getUser = async (req, res, next) => {
     })
   }
 
+  try {
 
 
-  const appointmentCount = await Appointment.count({ customer: userIdFromParam })
-  const paid = await Appointment.aggregate([
-    {
-      $match: {
-        customer: mongoose.Types.ObjectId(userIdFromParam)
+    const appointmentCount = await Appointment.count({ customer: userIdFromParam })
+    const paid = await Appointment.aggregate([
+      {
+        $match: {
+          customer: mongoose.Types.ObjectId(userIdFromParam)
+        }
+      },
+      {
+        $group: {
+          _id: {
+            customer: '$customer'
+          },
+          revenue: { $sum: "$service.price" }
+        }
       }
-    },
-    {
-      $group: {
-        _id: {
-          customer: '$customer'
-        },
-        revenue: { $sum: "$service.price" }
-      }
-    }
-  ])
+    ])
 
 
-  const rating = await Appointment.aggregate([
-    {
-      $match: {
-        customer: mongoose.Types.ObjectId(userIdFromParam),
-        status: 'done'
-      }
-    },
-    {
-      $group: {
-        _id: '$customer',
-        ratingAvg: { $avg: '$rating' }
-      }
-    },
+    const rating = await Appointment.aggregate([
+      {
+        $match: {
+          customer: mongoose.Types.ObjectId(userIdFromParam),
+          status: 'done'
+        }
+      },
+      {
+        $group: {
+          _id: '$customer',
+          ratingAvg: { $avg: '$rating' }
+        }
+      },
 
-    {
-      $project: {
-        _id: 0
+      {
+        $project: {
+          _id: 0
+        }
       }
-    }
 
-  ])
+    ])
 
 
-  const preferredWorkers = await Appointment.aggregate([
-    {
-      $match: {
-        customer: mongoose.Types.ObjectId(userIdFromParam)
+    const preferredWorkers = await Appointment.aggregate([
+      {
+        $match: {
+          customer: mongoose.Types.ObjectId(userIdFromParam)
+        }
+      },
+      {
+        $group: {
+          _id: {
+            worker: '$worker'
+          },
+          count: { $count: {} }
+        }
+      },
+      {
+        $addFields: {
+          worker: '$_id.worker'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'worker',
+          foreignField: '_id',
+          as: 'worker'
+        }
+      },
+      {
+        $unwind: '$worker'
+      },
+      {
+        $sort: { count: -1 }
+      },
+      {
+        $limit: 3
+      },
+      {
+        $project: {
+          _id: 0
+        }
       }
-    },
-    {
-      $group: {
-        _id: {
-          worker: '$worker'
-        },
-        count: { $count: {} }
-      }
-    },
-    {
-      $addFields: {
-        worker: '$_id.worker'
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'worker',
-        foreignField: '_id',
-        as: 'worker'
-      }
-    },
-    {
-      $unwind: '$worker'
-    },
-    {
-      $sort: { count: -1 }
-    },
-    {
-      $limit: 3
-    },
-    {
-      $project: {
-        _id: 0
-      }
-    }
-  ])
+    ])
 
 
 
-  res.status(200).json({
-    message: 'fetch success',
-    user,
-    appointmentCount,
-    paid: paid[0] ? paid[0].revenue : 0,
-    preferredWorkers,
-    rating: rating ? rating[0].ratingAvg : null
-  })
+    res.status(200).json({
+      message: 'fetch success',
+      user,
+      appointmentCount,
+      paid: paid[0] ? paid[0].revenue : 0,
+      preferredWorkers,
+      rating: rating ? rating[0].ratingAvg : null
+    })
+  } catch (e) {
+    console.log(e);
+  }
+
 }
 
 
