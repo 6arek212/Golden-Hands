@@ -611,6 +611,39 @@ exports.bookAppointment = async (req, res, next) => {
 
 
 
+exports.rate = async (req, res, next) => {
+    const { rate, appointmentId } = req.body
+    const { user, superUser } = req
+
+    try {
+        const appointment = await Appointment.findOne({ _id: appointmentId })
+
+        if (!appointment) {
+            return res.status(404).json({
+                message: 'Appointment was not found'
+            })
+        }
+
+        console.log(appointment.customer, user, appointment.customer !== user)
+
+        if (appointment.customer !== user && !superUser) {
+            return res.status(403).json({
+                message: 'You are not authorized'
+            })
+        }
+
+
+        await Appointment.updateOne({ _id: appointment }, { rating: rate }, { runValidators: true })
+
+        res.status(200).json({ message: 'rating has been submited' })
+
+    } catch (e) {
+        next(e)
+    }
+
+
+}
+
 
 exports.unbookAppointment = async (req, res, next) => {
     try {
