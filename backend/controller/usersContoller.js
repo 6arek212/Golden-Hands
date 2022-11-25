@@ -112,8 +112,8 @@ exports.getUser = async (req, res, next) => {
 
   const user = await User.findOne({ _id: userIdFromParam })
   if (!user) {
-    return res.status(400).json({
-      message: 'You need to signup'
+    return res.status(404).json({
+      message: 'user was not found'
     })
   }
 
@@ -137,12 +137,57 @@ exports.getUser = async (req, res, next) => {
   ])
 
 
+  const preferredWorkers = await Appointment.aggregate([
+    {
+      $match: {
+        customer: mongoose.Types.ObjectId(userIdFromParam)
+      }
+    },
+    {
+      $group: {
+        _id: {
+          customer: '$worker'
+        },
+        count: { $count: {} }
+      }
+    },
+    {
+      $addFields: {
+        customer: '$_id.customer'
+      }
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'customer',
+        foreignField: '_id',
+        as: 'customer'
+      }
+    },
+    {
+      $unwind: '$customer'
+    },
+    {
+      $sort: { count: -1 }
+    },
+    {
+      $limit: 3
+    },
+    {
+      $project: {
+        _id: 0
+      }
+    }
+  ])
+
+
 
   res.status(200).json({
     message: 'fetch success',
     user,
     appointmentCount,
-    paid: paid[0] ? paid[0].revenue : 0
+    paid: paid[0] ? paid[0].revenue : 0,
+    preferredWorkers
   })
 }
 

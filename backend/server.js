@@ -41,7 +41,7 @@ const onError = error => {
 const onListening = () => {
   const addr = server.address();
   const bind = typeof port === "string" ? "pipe " + addr : "port " + port;
-  console.log('server started', port)
+  console.log('server started', `http://localhost:${port}/api/`)
 };
 
 const port = normalizePort(process.env.PORT || "4000");
