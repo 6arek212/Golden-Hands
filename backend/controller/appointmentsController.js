@@ -633,9 +633,12 @@ exports.rate = async (req, res, next) => {
         }
 
 
-        const app = await Appointment.updateOne({ _id: appointment }, { rating: rate }, { runValidators: true })
+        const app = await Appointment.findOneAndUpdate({ _id: appointment }, { rating: rate }, { runValidators: true })
 
-        res.status(200).json({ message: 'rating has been submited', appointment: app })
+        res.status(200).json({
+            message: 'rating has been submited',
+            appointment: app
+        })
 
     } catch (e) {
         next(e)
