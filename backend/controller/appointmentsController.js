@@ -633,7 +633,12 @@ exports.rate = async (req, res, next) => {
         }
 
 
-        const app = await Appointment.findOneAndUpdate({ _id: appointment }, { rating: rate }, { runValidators: true, new: true })
+        const app = await Appointment.findOneAndUpdate(
+            { _id: appointment },
+            { rating: rate },
+            { runValidators: true, new: true })
+            .populate('worker', 'firstName lastName phone role image')
+            .populate('customer', 'firstName lastName phone role image')
 
         res.status(200).json({
             message: 'rating has been submited',
