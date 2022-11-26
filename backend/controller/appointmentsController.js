@@ -499,7 +499,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         const updatedAppointment = await Appointment.findOneAndUpdate(
             { _id: appointmentId },
             { ...updateOps },
-            { new: true })
+            { new: true, runValidators: true })
             .populate('worker')
             .populate('customer')
 
@@ -633,7 +633,7 @@ exports.rate = async (req, res, next) => {
         }
 
 
-        const app = await Appointment.findOneAndUpdate({ _id: appointment }, { rating: rate }, { runValidators: true })
+        const app = await Appointment.findOneAndUpdate({ _id: appointment }, { rating: rate }, { runValidators: true, new: true })
 
         res.status(200).json({
             message: 'rating has been submited',
