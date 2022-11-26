@@ -323,8 +323,7 @@ exports.createAppointment = async (req, res, next) => {
 exports.getAvailableAppointments = async (req, res, next) => {
     const { workerId, workingDate, fromDate } = req.query
 
-    const date = new Date(fromDate)
-    console.log(workerId, fromDate, date, workingDate);
+    console.log(workerId, fromDate, workingDate);
 
     try {
         const query = Appointment.find({
@@ -333,8 +332,14 @@ exports.getAvailableAppointments = async (req, res, next) => {
             status: 'free'
         })
 
-        query.where('start_time').gte(date)
-        query.where('workingDate').equals(workingDate)
+        if (fromDate) {
+            const date = new Date(fromDate)
+            query.where('start_time').gte(date)
+        }
+
+        if (workingDate) {
+            query.where('workingDate').equals(workingDate)
+        }
 
 
         const appointments = await query.populate('worker', 'firstName lastName phone role image').sort({ start_time: 'asc' })
