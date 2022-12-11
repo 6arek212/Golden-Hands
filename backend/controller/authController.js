@@ -16,43 +16,6 @@ const loginTries = 10
 
 
 
-
-
-
-
-
-// const uploadFile = async (fileFieldName, req, res) => {
-//     return new Promise((resolve, reject) => {
-
-//         try {
-//             const id = mongoose.Types.ObjectId();
-//             const fileName = Date.now() + '_' + id
-
-//             var upload = multer({
-//                 storage: storage('imgs', fileName),
-//                 limits: fileLimits,
-//                 fileFilter: fileFilter
-//             }).single(fileFieldName);
-
-
-//             upload(req, res, function (err) {
-//                 if (err) {
-//                     return resolve(err)
-//                 }
-//                 console.log(req.body.name, '   ', req.file.filename);
-//                 resolve()
-//             })
-//         } catch (err) {
-//             reject(err)
-//         }
-//     })
-// }
-
-
-// const fileUpResult = await uploadFile('image', req, res)
-
-
-
 const createToken = (_id, type = 'auth') => {
     time = '30d'
     const date = new Date()
