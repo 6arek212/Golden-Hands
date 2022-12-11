@@ -10,7 +10,8 @@ const { getAppointments,
     createAppointment,
     getUserAppointment,
     getUserAppointments,
-    createRangeAppointments
+    createRangeAppointments,
+    rate
 } = require('../controller/appointmentsController')
 
 
@@ -46,6 +47,7 @@ router.post('/book', checkFields('body', ['service', 'appointmentId', 'userId'])
 
 router.post('/unbook', checkFields('body', ['appointmentId']), requireAuth, unbookAppointment)
 
+router.post('/rate', checkFields('body', ['appointmentId', 'rate']), requireAuth, rate)
 
 
 //customer routes

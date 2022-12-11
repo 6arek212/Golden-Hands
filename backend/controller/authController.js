@@ -2,7 +2,8 @@ const User = require('../models/user')
 const Verify = require('../models/verify')
 const jwt = require('jsonwebtoken')
 
-const whatsapp = require('../utils/whatsapp')
+const whatsapp = require('../utils/whatsapp');
+const mongoose = require('mongoose');
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -191,6 +192,7 @@ exports.signup = async (req, res, next) => {
                     phone: user.phone,
                     role: user.role,
                     image: user.image,
+                    birthDate: user.birthDate
                 }
             }
         })
@@ -251,6 +253,7 @@ exports.verifyAndSignup = async (req, res, next) => {
                     phone: user.phone,
                     role: user.role,
                     image: user.image,
+                    birthDate: user.birthDate
                 },
                 token,
                 refresh_token,
@@ -304,6 +307,7 @@ exports.verifyAndLogin = async (req, res, next) => {
                     phone: user.phone,
                     role: user.role,
                     image: user.image,
+                    birthDate: user.birthDate
 
                 },
                 token,
@@ -391,7 +395,7 @@ exports.verifyAndUpdatePhone = async (req, res, next) => {
             })
         }
 
-        user = await User.findOneAndUpdate({ _id: userId }, { phone: phone }, { runValidators: true, returnOriginal: false })
+        user = await User.findOneAndUpdate({ _id: mongoose.Types.ObjectId(userId) }, { phone: phone }, { runValidators: true, returnOriginal: false })
 
         res.status(200).json({
             message: 'phone updated successfully',

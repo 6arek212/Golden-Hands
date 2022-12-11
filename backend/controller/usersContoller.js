@@ -112,39 +112,114 @@ exports.getUser = async (req, res, next) => {
 
   const user = await User.findOne({ _id: userIdFromParam })
   if (!user) {
-    return res.status(400).json({
-      message: 'You need to signup'
+    return res.status(404).json({
+      message: 'user was not found'
     })
   }
 
+  try {
 
 
-  const appointmentCount = await Appointment.count({ customer: userIdFromParam })
-  const paid = await Appointment.aggregate([
-    {
-      $match: {
-        customer: mongoose.Types.ObjectId(userIdFromParam)
+    const appointmentCount = await Appointment.count({ customer: userIdFromParam })
+    const paid = await Appointment.aggregate([
+      {
+        $match: {
+          customer: mongoose.Types.ObjectId(userIdFromParam)
+        }
+      },
+      {
+        $group: {
+          _id: {
+            customer: '$customer'
+          },
+          revenue: { $sum: "$service.price" }
+        }
       }
-    },
-    {
-      $group: {
-        _id: {
-          customer: '$customer'
-        },
-        revenue: { $sum: "$service.price" }
+    ])
+
+
+    const rating = await Appointment.aggregate([
+      {
+        $match: {
+          customer: mongoose.Types.ObjectId(userIdFromParam),
+          status: 'done'
+        }
+      },
+      {
+        $group: {
+          _id: '$customer',
+          ratingAvg: { $avg: '$rating' }
+        }
+      },
+
+      {
+        $project: {
+          _id: 0
+        }
       }
-    }
-  ])
+
+    ])
 
 
+    const preferredWorkers = await Appointment.aggregate([
+      {
+        $match: {
+          customer: mongoose.Types.ObjectId(userIdFromParam)
+        }
+      },
+      {
+        $group: {
+          _id: {
+            worker: '$worker'
+          },
+          count: { $count: {} }
+        }
+      },
+      {
+        $addFields: {
+          worker: '$_id.worker'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'worker',
+          foreignField: '_id',
+          as: 'worker'
+        }
+      },
+      {
+        $unwind: '$worker'
+      },
+      {
+        $sort: { count: -1 }
+      },
+      {
+        $limit: 3
+      },
+      {
+        $project: {
+          _id: 0
+        }
+      }
+    ])
 
-  res.status(200).json({
-    message: 'fetch success',
-    user,
-    appointmentCount,
-    paid: paid[0] ? paid[0].revenue : 0
-  })
+
+    res.status(200).json({
+      message: 'fetch success',
+      user,
+      appointmentCount,
+      paid: paid[0] ? paid[0].revenue : 0,
+      preferredWorkers,
+      rating: rating && rating[0] ? rating[0].ratingAvg : null
+    })
+  } catch (e) {
+    console.log(e);
+  }
+
 }
+
+
 
 
 exports.updateUser = async (req, res, next) => {
@@ -188,7 +263,7 @@ exports.updateUser = async (req, res, next) => {
 
   if (superUser) {
     if (req.body.phone) {
-      const numberExists = await User.findOne({ phone })
+      const numberExists = await User.findOne({ phone: req.body.phone })
       if (numberExists) {
         return res.status(400).json({
           message: 'the phone number already exsits'
@@ -203,15 +278,17 @@ exports.updateUser = async (req, res, next) => {
     }
   }
 
+  try {
+    const user = await User.findOneAndUpdate({ _id: userIdParam }, { ...req.body }, { runValidators: true, returnOriginal: false })
 
-  const user = await User.findOneAndUpdate({ _id: userIdParam }, { ...req.body }, { runValidators: true, returnOriginal: false })
-
-  console.log(user);
-  res.status(200).json({
-    message: 'update success',
-    user
-  })
-
+    console.log(user);
+    res.status(200).json({
+      message: 'update success',
+      user
+    })
+  } catch (e) {
+    next(e)
+  }
 }
 
 

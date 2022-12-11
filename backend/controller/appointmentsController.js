@@ -323,8 +323,7 @@ exports.createAppointment = async (req, res, next) => {
 exports.getAvailableAppointments = async (req, res, next) => {
     const { workerId, workingDate, fromDate } = req.query
 
-    const date = new Date(fromDate)
-    console.log(workerId, fromDate, date, workingDate);
+    console.log(workerId, fromDate, workingDate);
 
     try {
         const query = Appointment.find({
@@ -333,8 +332,14 @@ exports.getAvailableAppointments = async (req, res, next) => {
             status: 'free'
         })
 
-        query.where('start_time').gte(date)
-        query.where('workingDate').equals(workingDate)
+        if (fromDate) {
+            const date = new Date(fromDate)
+            query.where('start_time').gte(date)
+        }
+
+        if (workingDate) {
+            query.where('workingDate').equals(workingDate)
+        }
 
 
         const appointments = await query.populate('worker', 'firstName lastName phone role image').sort({ start_time: 'asc' })
@@ -499,7 +504,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         const updatedAppointment = await Appointment.findOneAndUpdate(
             { _id: appointmentId },
             { ...updateOps },
-            { new: true })
+            { new: true, runValidators: true })
             .populate('worker')
             .populate('customer')
 
@@ -610,6 +615,47 @@ exports.bookAppointment = async (req, res, next) => {
 }
 
 
+
+exports.rate = async (req, res, next) => {
+    const { rate, appointmentId } = req.body
+    const { user, superUser } = req
+
+    try {
+        const appointment = await Appointment.findOne({ _id: appointmentId })
+
+        if (!appointment) {
+            return res.status(404).json({
+                message: 'Appointment was not found'
+            })
+        }
+
+        console.log(appointment.customer, user, appointment.customer !== user)
+
+        if (appointment.customer !== user && !superUser) {
+            return res.status(403).json({
+                message: 'You are not authorized'
+            })
+        }
+
+
+        const app = await Appointment.findOneAndUpdate(
+            { _id: appointment },
+            { rating: rate },
+            { runValidators: true, new: true })
+            .populate('worker', 'firstName lastName phone role image')
+            .populate('customer', 'firstName lastName phone role image')
+
+        res.status(200).json({
+            message: 'rating has been submited',
+            appointment: app
+        })
+
+    } catch (e) {
+        next(e)
+    }
+
+
+}
 
 
 exports.unbookAppointment = async (req, res, next) => {
