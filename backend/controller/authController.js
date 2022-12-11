@@ -101,6 +101,12 @@ exports.sendAuthVerification = async (req, res, next) => {
             })
         }
 
+        if(user.isBlocked){
+            return res.status(403).json({
+                message:'You are blocked, try contact our manegment'
+            })
+        }
+
 
         const verifiesCount = await Verify.count({ phone: phone, forAuth: true })
         if (verifiesCount > loginTries) {
