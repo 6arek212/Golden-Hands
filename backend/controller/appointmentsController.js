@@ -631,7 +631,8 @@ exports.rate = async (req, res, next) => {
 
         console.log(appointment.customer, user, appointment.customer !== user)
 
-        if (appointment.customer !== user && !superUser) {
+        //TODO: somthing wrong with this condition
+        if (appointment.customer !== mongoose.Types.ObjectId(user) && !superUser) {
             return res.status(403).json({
                 message: 'You are not authorized'
             })
