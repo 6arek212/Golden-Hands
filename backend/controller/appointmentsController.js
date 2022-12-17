@@ -470,11 +470,21 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         //     })
         // }
 
+
+        if ((status !== 'free') && (status !== 'hold') && appointment.status === 'free') {
+            return res.status(400).json({
+                message: 'you cant change the status while the appointment is free'
+            })
+        }
+
+
+
         if ((status === 'done' || status === 'in-progress') && !appointment.service) {
             return res.status(403).json({
                 message: 'you cant change the status to done or in-progress without a service'
             })
         }
+
 
 
 
@@ -632,7 +642,7 @@ exports.rate = async (req, res, next) => {
         console.log(appointment.customer, user, appointment.customer !== user)
 
         //TODO: somthing wrong with this condition
-        if ( !appointment.customer.equals(user) && !superUser) {
+        if (!appointment.customer.equals(user) && !superUser) {
             return res.status(403).json({
                 message: 'You are not authorized'
             })
