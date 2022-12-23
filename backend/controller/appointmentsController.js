@@ -451,30 +451,41 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         }
 
 
-        console.log(service, status);
+        if (appointment.status === 'done') {
+            return res.status(400).json({
+                message: 'this appointment is marked as done, you cant change it'
+            })
+        }
+
+
+        if (appointment.service === 'free' && status !== 'hold') {
+            return res.status(400).json({
+                message: 'free appointment can only be hold'
+            })
+        }
+
+
+        if (appointment.service === 'canceled' && status !== 'hold' && status !== 'free') {
+            return res.status(400).json({
+                message: 'canceled appointment can only be hold or free'
+            })
+        }
+
+
+        if (appointment.service === 'hold' && status !== 'free' && status !== 'canceled' && status !== 'didnt-come') {
+            return res.status(400).json({
+                message: 'holded appointment can only be canceled , free or didnt-come'
+            })
+        }
+
+
         if (status === 'hold' && !appointment.service && !service) {
             return res.status(403).json({
                 message: 'you cant change the status to hold without a service'
             })
         }
 
-        // if we want to make the appointment in-progress again , the time must not be older than today !!!!! 
 
-        // const start_time = new Date(appointment.start_time)
-        // start_time.setMinutes(start_time.getMinutes() + 30)
-        // const current_time = new Date()
-
-        // if ((status === 'in-progress' ||  status === 'hold') && current_time > start_time) {
-        //     return res.status(403).json({
-        //         message: 'you cant change the status to free , in-progress or hold for and old appointment'
-        //     })
-        // }
-
-        if ((status === 'done' || status === 'in-progress') && !appointment.service) {
-            return res.status(403).json({
-                message: 'you cant change the status to done or in-progress without a service'
-            })
-        }
 
 
 
@@ -632,7 +643,7 @@ exports.rate = async (req, res, next) => {
         console.log(appointment.customer, user, appointment.customer !== user)
 
         //TODO: somthing wrong with this condition
-        if ( !appointment.customer.equals(user) && !superUser) {
+        if (!appointment.customer.equals(user) && !superUser) {
             return res.status(403).json({
                 message: 'You are not authorized'
             })
