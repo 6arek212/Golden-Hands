@@ -489,6 +489,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
 
 
 
+
         const updateOps = { status }
         if ((status === 'free')) {
             updateOps.customer = null
