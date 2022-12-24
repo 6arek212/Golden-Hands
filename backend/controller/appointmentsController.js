@@ -381,7 +381,7 @@ exports.getUserAppointments = async (req, res, next) => {
     try {
         const appointments = await Appointment.find({ customer: user })
             .populate('customer')
-            .populate('worker').sort({ 'status': 'desc' })
+            .populate('worker').sort({ 'status': 'desc', start_time: 'desc' })
 
         res.status(200).json({
             message: 'fetched appointment successfull',
@@ -451,30 +451,36 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         }
 
 
-        if (appointment.status === 'done') {
+        if (appointment.status === 'done' && status !== 'canceled' && status !== 'didnt-come') {
             return res.status(400).json({
-                message: 'this appointment is marked as done, you cant change it'
+                message: 'this appointment is marked as done, you cant change the status to other than , canceled , didnt-come , done'
             })
         }
 
 
-        if (appointment.service === 'free' && status !== 'hold') {
+        if (appointment.status === 'free' && status !== 'hold') {
             return res.status(400).json({
                 message: 'free appointment can only be hold'
             })
         }
 
 
-        if (appointment.service === 'canceled' && status !== 'hold' && status !== 'free') {
+        if (appointment.status === 'canceled' && status !== 'hold' && status !== 'free'  && status !== 'didnt-come') {
             return res.status(400).json({
                 message: 'canceled appointment can only be hold or free'
             })
         }
 
 
-        if (appointment.service === 'hold' && status !== 'free' && status !== 'canceled' && status !== 'didnt-come') {
+        if (appointment.status === 'hold' && status !== 'free' && status !== 'canceled' && status !== 'didnt-come') {
             return res.status(400).json({
                 message: 'holded appointment can only be canceled , free or didnt-come'
+            })
+        }
+
+        if (appointment.status === 'didnt-come' && status !== 'free' && status !== 'canceled' && status !== 'hold') {
+            return res.status(400).json({
+                message: 'didnt-come appointment can only be canceled , free or hold'
             })
         }
 
@@ -484,10 +490,6 @@ exports.updateAppointmentStatus = async (req, res, next) => {
                 message: 'you cant change the status to hold without a service'
             })
         }
-
-
-
-
 
 
         const updateOps = { status }
