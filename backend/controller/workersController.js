@@ -2,7 +2,7 @@ const User = require('../models/user')
 const { Service } = require('../models/service')
 const Appointment = require('../models/appointment')
 const mongoose = require('mongoose')
-
+const moment = require('moment')
 
 module.exports.getWorkers = async (req, res, next) => {
     console.log('----------------getWorkers----------------');
@@ -227,9 +227,10 @@ module.exports.getWorker = async (req, res, next) => {
 
 
 module.exports.getWorkingDates = async (req, res, next) => {
-    const { workerId, fromDate } = req.query
+    const { workerId, fromDate, timezone } = req.query
     console.log('----------------getWorkingDates----------------');
-    console.log('params', workerId, fromDate);
+
+    console.log('params', workerId, new Date(fromDate), timezone);
 
 
     if (!mongoose.Types.ObjectId.isValid(workerId)) {
@@ -239,37 +240,47 @@ module.exports.getWorkingDates = async (req, res, next) => {
     }
 
 
-    const query = Appointment.find({ worker: workerId })
+    const data = await Appointment.aggregate([
+        {
+            $match: {
+                worker: mongoose.Types.ObjectId(workerId),
+                start_time: { $gte: new Date(fromDate) },
+                status: { $eq: 'free' }
+            }
+        },
 
 
-    if (fromDate) {
-        const from = new Date(fromDate)
-        const to = new Date(from)
-        to.setDate(from.getDate() + 6)
+        {
+            $group: {
+                _id: {
+                    date: {
+                        $dateToString: {
+                            date: "$start_time",
+                            timezone: timezone,
+                            format: '%Y-%m-%dT00:00:00%z'
+                        }
+                    }
+                },
+            }
+        },
+        {
+            $sort: {
+                '_id.date': 1
+            }
+        },
 
-
-        if (from) {
-            query.where('workingDate').gte(from)
+        {
+            $project: {
+                date: '$_id.date',
+                _id: 0
+            }
         }
+    ])
 
-        if (to) {
-            query.where('workingDate').lte(to)
-        }
-    }
-
-    try {
-        const workingDates = await query
-            .sort({ date: 'asc' })
-            .distinct('workingDate')
-
-
-        res.status(200).json({
-            message: 'fetch working dates success',
-            workingDates
-        })
-    } catch (e) {
-        next(e)
-    }
+    res.status(200).json({
+        message: 'fetch success',
+        workingDates: data
+    })
 }
 
 

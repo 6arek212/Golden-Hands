@@ -3,6 +3,7 @@ const User = require('../models/user')
 const { Service } = require('../models/service')
 const mongoose = require('mongoose')
 const whatsapp = require('../utils/whatsapp')
+const moment = require('moment')
 
 exports.getAppointments = async (req, res, next) => {
     console.log('--------------- getAppointments requrest ----------------------------');
@@ -324,6 +325,11 @@ exports.getAvailableAppointments = async (req, res, next) => {
     const { workerId, workingDate, fromDate } = req.query
 
     console.log(workerId, fromDate, workingDate);
+    const workingDateStart = new Date(workingDate)
+    const workingDateEnd = new Date(workingDate)
+    workingDateEnd.setDate(workingDateEnd.getDate() + 1)
+
+    console.log(workingDateStart, workingDateEnd );
 
     try {
         const query = Appointment.find({
@@ -334,11 +340,12 @@ exports.getAvailableAppointments = async (req, res, next) => {
 
         if (fromDate) {
             const date = new Date(fromDate)
-            query.where('start_time').gte(date)
+            query.where('start_time').gt(date)
         }
 
         if (workingDate) {
-            query.where('workingDate').equals(workingDate)
+            query.where('start_time').gte(workingDateStart)
+                .where('start_time').lt(workingDateEnd)
         }
 
 
@@ -465,7 +472,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         }
 
 
-        if (appointment.status === 'canceled' && status !== 'hold' && status !== 'free'  && status !== 'didnt-come') {
+        if (appointment.status === 'canceled' && status !== 'hold' && status !== 'free' && status !== 'didnt-come') {
             return res.status(400).json({
                 message: 'canceled appointment can only be hold or free'
             })

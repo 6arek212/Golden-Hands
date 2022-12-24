@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const mongoose = require('mongoose')
 const Appointment = require('../models/appointment')
 
 exports.getStats = async (req, res, next) => {
@@ -37,7 +38,7 @@ exports.getWorkerRevenue = async (req, res, next) => {
     }
 
     if (workerId) {
-        $match.worker = workerId
+        $match.worker = mongoose.Types.ObjectId(workerId)
     }
 
     const result = await Appointment.aggregate([
