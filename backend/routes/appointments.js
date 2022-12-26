@@ -23,7 +23,7 @@ router.get('/', requireWorkerAuth, getAppointments)
 
 router.post('/', checkFields('body', ['worker', 'start_time', 'end_time']), requireWorkerAuth, createAppointment)
 
-router.post('/range-appointments', checkFields('body', ['worker', 'start_time', 'end_time', 'interval']), requireWorkerAuth, createRangeAppointments)
+router.post('/range-appointments', checkFields('body', ['worker', 'start_time', 'end_time', 'duration']), requireWorkerAuth, createRangeAppointments)
 
 router.patch('/update-status', checkFields('body', ['appointmentId', 'status']), requireWorkerAuth, updateAppointmentStatus)
 

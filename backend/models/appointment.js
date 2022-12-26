@@ -21,7 +21,6 @@ const serviceSchema = new mongoose.Schema({
 const appointmentSchema = new mongoose.Schema({
     customer: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     worker: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
-    workingDate: { type: Date, required: true },
     start_time: { type: Date, required: true },
     end_time: { type: Date, required: true },
     service: { type: serviceSchema },

@@ -65,7 +65,7 @@ exports.sendAuthVerification = async (req, res, next) => {
             })
         }
 
-        if(user.isBlocked){
+        if(user && user.isBlocked){
             return res.status(403).json({
                 message:'You are blocked, try contact our manegment'
             })

@@ -7,6 +7,7 @@ const path = require("path")
 const docs = require('./docs');
 
 const appointmentReminder = require('./utils/appointment-reminder')
+const appointmentsRemover = require('./utils/appointments-remover')
 
 const appointmentsRouter = require('./routes/appointments')
 const usersRoutes = require('./routes/users')
@@ -24,6 +25,7 @@ mongoose.connect(process.env.MONGO_URI,
   .then(() => {
     console.log('connected to the DB');
     appointmentReminder.start()
+    appointmentsRemover.start()
   })
   .catch(err => {
     console.log('Connection to DataBase failed', err);

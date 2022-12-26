@@ -38,12 +38,12 @@ module.exports = {
         required: true
       },
       {
-        name: "interval", 
+        name: "duration", 
         in: "body", 
         schema: {
           type: "number",
         },
-        description: "the appointments length in minutes", 
+        description: "the appointments duration in minutes", 
         example: "30",
         required: true
       }

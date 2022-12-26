@@ -136,38 +136,38 @@ exports.getAppointments = async (req, res, next) => {
 
 
 
-const getAppointmentsListFromRange = (worker, startDate, endDate, workingDate, interval = 30) => {
-    var date1 = new Date(startDate)
+const getAppointmentsListFromRange = (worker, startDate, endDate, duration = 30) => {
+
+    console.log('creating appointments', duration);
+    var date1 = moment(startDate)
     const list = []
 
 
     const diffTime = Math.abs(startDate - endDate);
     const hourDiff = diffTime / (1000 * 60);
 
-    const numberOfAppointments = parseInt(hourDiff / interval)
+    const numberOfAppointments = parseInt(hourDiff / duration)
 
     console.log(numberOfAppointments);
-    const date2 = new Date(date1)
-    date2.setMinutes(date2.getMinutes() + interval)
+    const date2 = moment(date1)
+    date2.add(duration, 'minutes')
 
     for (var i = 0; i < numberOfAppointments; i++) {
-
         list.push({
             worker: worker,
-            start_time: new Date(date1),
-            end_time: new Date(date2),
-            workingDate: workingDate
+            start_time: date1.format(),
+            end_time: date2.format()
         })
-        date1.setMinutes(date1.getMinutes() + interval)
-        date2.setMinutes(date2.getMinutes() + interval)
+        date1.add(duration, 'minutes')
+        date2.add(duration, 'minutes')
     }
 
     return list
 }
 
 exports.createRangeAppointments = async (req, res, next) => {
-
-    const { worker, start_time, end_time, interval, status } = req.body
+    console.log('-----------createRangeAppointments-------------');
+    const { worker, start_time, end_time, duration, status } = req.body
 
     const timezone = start_time.substring(start_time.length - 5)
     const workingDate = new Date(start_time.split('T')[0] + 'T00:00:00' + timezone)
@@ -177,16 +177,90 @@ exports.createRangeAppointments = async (req, res, next) => {
     console.log('workingDate', workingDate, 'end working date', maxEndDate);
 
 
-
+    const current_date = new Date()
     const s_time = new Date(start_time)
     const e_time = new Date(end_time)
 
-    // validate start and end time
+
+
+    // check if the worker is valid
+    if (!mongoose.Types.ObjectId.isValid(worker)) {
+        return res.status(404).json({
+            message: 'worker id is not valid'
+        })
+    }
+
+
+    const wk = await User.findOne({ _id: worker })
+    if (wk.role !== 'barber') {
+        return res.status(400).json({
+            message: 'worker must have a non customer role'
+        })
+    }
+
+
+
     console.log('s_time', s_time, 'e_time date', e_time);
+
+    //validate dates 
+    if (e_time < s_time) {
+        return res.status(400).json({
+            message: 'the end_date cant be older than start_date'
+        })
+    }
+
+    if (s_time < current_date) {
+        return res.status(400).json({
+            message: 'the date cant be older than now'
+        })
+    }
+
+    const diffTime = Math.abs(e_time - s_time);
+    const diff = diffTime / (1000 * 60 * 60);
+
+    if (diff > 24) {
+        return res.status(400).json({
+            message: 'the max start to end is 24 hours'
+        })
+    }
+
+
+    if (diff * 60 < 5) {
+        return res.status(400).json({
+            message: 'the min start to end is 5 min'
+        })
+    }
+
+
+    if (e_time >= maxEndDate) {
+        return res.status(400).json({
+            message: 'the max end date is 23:59 , and days cant intersect'
+        })
+    }
+
+    if (duration < 5 || duration > 120) {
+        return res.status(400).json({
+            message: 'the max duration is 120 and the min is 5'
+        })
+    }
+
+
+    //check if there is an intersection with another appointment 
+    const conflictingAppointments = await Appointment.findOne()
+        .where('worker').equals(worker)
+        .where('start_time').lt(end_time)
+        .where('end_time').gt(start_time)
+
+
+    if (conflictingAppointments) {
+        return res.status(400).json({
+            message: 'appointments conflicting'
+        })
+    }
 
 
     // make all appointments
-    const appointmentsList = getAppointmentsListFromRange(worker, s_time, e_time, workingDate, interval)
+    const appointmentsList = getAppointmentsListFromRange(worker, s_time, e_time, duration)
 
     console.log(appointmentsList);
 
@@ -222,7 +296,7 @@ exports.createAppointment = async (req, res, next) => {
         // var date = new Date(s_time.getFullYear(), s_time.getMonth(), s_time.getDate());
         const date = new Date(start_time.split('T')[0] + 'T00:00:00' + timezone)
 
-        console.log('create appointment __date__', date, '__start__',
+        console.log(start_time, end_time, 'create appointment __date__', date, '__start__',
             s_time, '__end__', e_time)
 
 
@@ -329,7 +403,7 @@ exports.getAvailableAppointments = async (req, res, next) => {
     const workingDateEnd = new Date(workingDate)
     workingDateEnd.setDate(workingDateEnd.getDate() + 1)
 
-    console.log(workingDateStart, workingDateEnd );
+    console.log(workingDateStart, workingDateEnd);
 
     try {
         const query = Appointment.find({
