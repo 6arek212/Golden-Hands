@@ -11,7 +11,7 @@ exports.getAppointments = async (req, res, next) => {
     const pageSize = + req.query.pageSize
     const currentPage = +  req.query.currentPage
 
-    console.log(workerId, search, pageSize, currentPage, start_time, end_time);
+    console.log(workerId, search, pageSize, currentPage, start_time, end_time , status);
 
     // const query = Appointment
     //     .find()
@@ -109,7 +109,7 @@ exports.getAppointments = async (req, res, next) => {
     let numberOfActiveCustomers;
     if (start_time && end_time) {
         numberOfActiveCustomers = await Appointment.count({
-            $or: [{ status: 'in-progress' }, { status: 'done' }],
+            $or: [{ status: 'in-progress' }, { status: 'done' } , { status: 'hold' }],
             start_time: { $gte: new Date(start_time) },
             end_time: { $lt: new Date(end_time) }
         })

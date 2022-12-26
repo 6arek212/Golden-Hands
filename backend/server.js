@@ -59,11 +59,11 @@ const io = new Server(server);
 
 const appointmentsIo = io.of('/socket/appointments')
 const appointmentStream = Appointment.watch()
-
+// const activeUsers = []
 
 appointmentsIo.on('connection', (socket) => {
   console.log('user connected');
-  activeUsers.add(socket);
+  // activeUsers.add(socket);
 
   socket.on('disconnect', () => {
     console.log('user disconnected');
@@ -71,9 +71,19 @@ appointmentsIo.on('connection', (socket) => {
 });
 
 
+const User = require('./models/user')
+appointmentStream.on('change', async (change) => {
+  console.log('change in appointments', appointmentsIo.sockets.size);
 
-appointmentStream.on('change',(change)=>{
-  console.log('change in appointments');
-  appointmentsIo.emit('change' , change)
+  let obj = change
+  if (change.operationType === 'update' && change.updateDescription.updatedFields.customer) {
+    const user = await User.findOne({ _id: change.updateDescription.updatedFields.customer })
+    obj = {
+      ...change
+    }
+    change.updateDescription.updatedFields.customer = user
+  }
+
+  appointmentsIo.emit('change', obj)
 })
 
