@@ -100,7 +100,7 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getUser = async (req, res, next) => {
   const userIdFromAuth = req.user
-  const { superUser } = req
+  const { superUser , worker_mode } = req
   const { userId: userIdFromParam } = req.params
 
   if (userIdFromAuth !== userIdFromParam && !superUser) {
@@ -119,13 +119,14 @@ exports.getUser = async (req, res, next) => {
 
   try {
 
-
+    console.log(userIdFromAuth);
     const appointmentCount = await Appointment.count({ customer: userIdFromParam })
-    const paid = await Appointment.aggregate([
+    const paid = worker_mode ? await Appointment.aggregate([
       {
         $match: {
           customer: mongoose.Types.ObjectId(userIdFromParam),
-          status: 'done'
+          status: 'done',
+          worker: mongoose.Types.ObjectId(userIdFromAuth)
         }
       },
       {
@@ -136,7 +137,7 @@ exports.getUser = async (req, res, next) => {
           revenue: { $sum: "$service.price" }
         }
       }
-    ])
+    ]) : null
 
 
     const rating = await Appointment.aggregate([
