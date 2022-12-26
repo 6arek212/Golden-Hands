@@ -106,13 +106,17 @@ exports.getAppointments = async (req, res, next) => {
     }
 
 
-
+    let numberOfActiveCustomers;
+    if (start_time && end_time) {
+        numberOfActiveCustomers = await Appointment.count({
+            $or: [{ status: 'in-progress' }, { status: 'done' }],
+            start_time: { $gte: new Date(start_time) },
+            end_time: { $lt: new Date(end_time) }
+        })
+    }
 
 
     try {
-        // const q1 = query.clone()
-        // const count = await q1.count()
-
 
         //paging
         if (currentPage && pageSize) {
@@ -127,7 +131,7 @@ exports.getAppointments = async (req, res, next) => {
         res.status(200).json({
             message: 'fetched appointments successfull',
             appointments: appointments,
-            // count
+            numberOfActiveCustomers: numberOfActiveCustomers
         })
     } catch (e) {
         next(e)
