@@ -557,9 +557,9 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         }
 
 
-        if (appointment.status === 'hold' && status !== 'free' && status !== 'canceled' && status !== 'didnt-come') {
+        if (appointment.status === 'hold' && status !== 'free' && status !== 'canceled' && status !== 'didnt-come' && status !== 'done') {
             return res.status(400).json({
-                message: 'holded appointment can only be canceled , free or didnt-come'
+                message: 'holded appointment status cant be changed to in-progress'
             })
         }
 
