@@ -228,9 +228,10 @@ module.exports.getWorker = async (req, res, next) => {
 
 module.exports.getWorkingDates = async (req, res, next) => {
     const { workerId, fromDate, timezone } = req.query
+    limit = + req.query.limit
     console.log('----------------getWorkingDates----------------');
 
-    console.log('params', workerId, new Date(fromDate), timezone);
+    console.log('params', workerId, new Date(fromDate), timezone, limit);
 
 
     if (!mongoose.Types.ObjectId.isValid(workerId)) {
@@ -240,7 +241,8 @@ module.exports.getWorkingDates = async (req, res, next) => {
     }
 
 
-    const data = await Appointment.aggregate([
+
+    const pipLine = [
         {
             $match: {
                 worker: mongoose.Types.ObjectId(workerId),
@@ -268,7 +270,17 @@ module.exports.getWorkingDates = async (req, res, next) => {
                 '_id.date': 1
             }
         },
+    ]
 
+
+    if (limit) {
+        pipLine.push({
+            $limit: limit
+        })
+    }
+
+    const data = await Appointment.aggregate([
+        ...pipLine,
         {
             $project: {
                 date: '$_id.date',

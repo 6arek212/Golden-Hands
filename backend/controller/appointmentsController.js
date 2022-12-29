@@ -11,7 +11,7 @@ exports.getAppointments = async (req, res, next) => {
     const pageSize = + req.query.pageSize
     const currentPage = +  req.query.currentPage
 
-    console.log(workerId, search, pageSize, currentPage, start_time, end_time , status);
+    console.log(workerId, search, pageSize, currentPage, start_time, end_time, status);
 
     // const query = Appointment
     //     .find()
@@ -109,7 +109,7 @@ exports.getAppointments = async (req, res, next) => {
     let numberOfActiveCustomers;
     if (start_time && end_time) {
         numberOfActiveCustomers = await Appointment.count({
-            $or: [{ status: 'in-progress' }, { status: 'done' } , { status: 'hold' }],
+            $or: [{ status: 'in-progress' }, { status: 'done' }, { status: 'hold' }],
             start_time: { $gte: new Date(start_time) },
             end_time: { $lt: new Date(end_time) }
         })
@@ -398,7 +398,7 @@ exports.createAppointment = async (req, res, next) => {
 
 
 
-//TODO: GET APPOINTMENTS FROM DATE TILL THE END OF THE DAY  
+
 exports.getAvailableAppointments = async (req, res, next) => {
     const { workerId, workingDate, fromDate } = req.query
 
@@ -483,7 +483,7 @@ exports.getUserAppointments = async (req, res, next) => {
 
 // only admin can delete an appointment !!!!
 exports.deleteAppointment = async (req, res, next) => {
-    const { appointmentId, message } = req.params
+    const { appointmentId } = req.params
 
     try {
         const appointment = await Appointment.findOne({ _id: appointmentId })
@@ -500,6 +500,21 @@ exports.deleteAppointment = async (req, res, next) => {
         await Appointment.deleteOne({ _id: appointmentId })
         res.status(200).json({
             message: 'appointment deleted'
+        })
+    }
+    catch (e) {
+        next(e)
+    }
+}
+
+
+exports.deleteAppointments = async (req, res, next) => {
+    const { appointments } = req.body
+
+    try {
+        const result = await Appointment.deleteMany({_id: { $in: appointments}})
+        res.status(200).json({
+            message: 'appointments deleted'
         })
     }
     catch (e) {

@@ -74,6 +74,9 @@ appointmentsIo.on('connection', (socket) => {
 const User = require('./models/user')
 appointmentStream.on('change', async (change) => {
   console.log('change in appointments', appointmentsIo.sockets.size);
+  if (change.operationType !== 'update') {
+    return
+  }
 
   let obj = change
   if (change.operationType === 'update' && change.updateDescription.updatedFields.customer) {
