@@ -512,7 +512,8 @@ exports.deleteAppointments = async (req, res, next) => {
     const { appointments } = req.body
 
     try {
-        const result = await Appointment.deleteMany({_id: { $in: appointments}})
+        const result = await Appointment.deleteMany({ _id: { $in: appointments } })
+        console.log(result)
         res.status(200).json({
             message: 'appointments deleted'
         })
