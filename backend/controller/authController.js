@@ -65,9 +65,9 @@ exports.sendAuthVerification = async (req, res, next) => {
             })
         }
 
-        if(user && user.isBlocked){
+        if (user && user.isBlocked) {
             return res.status(403).json({
-                message:'You are blocked, try contact our manegment'
+                message: 'You are blocked, try contact our manegment'
             })
         }
 
@@ -303,14 +303,16 @@ exports.refreshToken = async (req, res, next) => {
 
         const { _id } = await jwt.verify(refreshToken, process.env.SECRET)
 
-        const { token: newtoken, expireDate } = createToken(_id, 'auth')
-
+        console.log(_id)
+        const { token, expireDate } = createToken(_id, 'auth')
+        const { token: refresh_token, expireDate: expireDateRefreshToken } = createToken(_id, 'refresh')
         res.status(200).json({
             message: 'token refreshed',
-            token: newtoken,
-            expireDate: expireDate
+            token: token,
+            refresh_token: refresh_token,
+            expireDate: expireDate,
+            expireDateRefreshToken: expireDateRefreshToken
         })
-
     } catch (e) {
         next(e)
     }

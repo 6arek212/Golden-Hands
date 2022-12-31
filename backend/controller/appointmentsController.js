@@ -559,7 +559,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         }
 
 
-        if (appointment.status === 'free' && status !== 'hold') {
+        if (appointment.status === 'free' && status !== 'hold' && status !== 'canceled') {
             return res.status(400).json({
                 message: 'free appointment can only be hold'
             })
