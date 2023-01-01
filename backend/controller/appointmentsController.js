@@ -11,7 +11,7 @@ exports.getAppointments = async (req, res, next) => {
     const pageSize = + req.query.pageSize
     const currentPage = +  req.query.currentPage
 
-    console.log(workerId, search, pageSize, currentPage, start_time, end_time , status);
+    console.log(workerId, search, pageSize, currentPage, start_time, end_time, status);
 
     // const query = Appointment
     //     .find()
@@ -75,9 +75,15 @@ exports.getAppointments = async (req, res, next) => {
 
     //status
     if (status) {
-        query.match({
-            status: status
-        })
+        if (status === 'in-progress') {
+            query.match({
+                $or: [{ status: 'in-progress' }, { status: 'hold' }]
+            })
+        } else {
+            query.match({
+                status: status
+            })
+        }
     }
 
     //service
@@ -109,7 +115,7 @@ exports.getAppointments = async (req, res, next) => {
     let numberOfActiveCustomers;
     if (start_time && end_time) {
         numberOfActiveCustomers = await Appointment.count({
-            $or: [{ status: 'in-progress' }, { status: 'done' } , { status: 'hold' }],
+            $or: [{ status: 'in-progress' }, { status: 'done' }, { status: 'hold' }],
             start_time: { $gte: new Date(start_time) },
             end_time: { $lt: new Date(end_time) }
         })
