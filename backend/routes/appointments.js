@@ -11,7 +11,8 @@ const { getAppointments,
     getUserAppointment,
     getUserAppointments,
     createRangeAppointments,
-    rate
+    rate,
+    deleteAppointments
 } = require('../controller/appointmentsController')
 
 
@@ -28,6 +29,8 @@ router.post('/range-appointments', checkFields('body', ['worker', 'start_time', 
 router.patch('/update-status', checkFields('body', ['appointmentId', 'status']), requireWorkerAuth, updateAppointmentStatus)
 
 router.delete('/:appointmentId', requireWorkerAuth, deleteAppointment)
+
+router.delete('/', checkFields('body', ['appointments']), requireWorkerAuth, deleteAppointments)
 
 
 const App = require('../models/appointment')

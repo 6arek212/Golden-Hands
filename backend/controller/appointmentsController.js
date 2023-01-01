@@ -404,7 +404,7 @@ exports.createAppointment = async (req, res, next) => {
 
 
 
-//TODO: GET APPOINTMENTS FROM DATE TILL THE END OF THE DAY  
+
 exports.getAvailableAppointments = async (req, res, next) => {
     const { workerId, workingDate, fromDate } = req.query
 
@@ -489,7 +489,7 @@ exports.getUserAppointments = async (req, res, next) => {
 
 // only admin can delete an appointment !!!!
 exports.deleteAppointment = async (req, res, next) => {
-    const { appointmentId, message } = req.params
+    const { appointmentId } = req.params
 
     try {
         const appointment = await Appointment.findOne({ _id: appointmentId })
@@ -506,6 +506,22 @@ exports.deleteAppointment = async (req, res, next) => {
         await Appointment.deleteOne({ _id: appointmentId })
         res.status(200).json({
             message: 'appointment deleted'
+        })
+    }
+    catch (e) {
+        next(e)
+    }
+}
+
+
+exports.deleteAppointments = async (req, res, next) => {
+    const { appointments } = req.body
+
+    try {
+        const result = await Appointment.deleteMany({ _id: { $in: appointments } })
+        console.log(result)
+        res.status(200).json({
+            message: 'appointments deleted'
         })
     }
     catch (e) {
@@ -549,7 +565,7 @@ exports.updateAppointmentStatus = async (req, res, next) => {
         }
 
 
-        if (appointment.status === 'free' && status !== 'hold') {
+        if (appointment.status === 'free' && status !== 'hold' && status !== 'canceled') {
             return res.status(400).json({
                 message: 'free appointment can only be hold'
             })
