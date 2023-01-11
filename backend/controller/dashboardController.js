@@ -30,7 +30,7 @@ exports.getStats = async (req, res, next) => {
 
 
 exports.getWorkerRevenue = async (req, res, next) => {
-    const { workerId , timezone } = req.query
+    const { workerId, timezone } = req.query
 
     const $match =
     {
@@ -65,13 +65,13 @@ exports.getWorkerRevenue = async (req, res, next) => {
                     year: {
                         $year: {
                             date: "$start_time",
-                            timezone: timezone
+                            timezone: timezone ? timezone : '+0300'
                         }
                     },
                     month: {
                         $month: {
                             date: "$start_time",
-                            timezone: timezone
+                            timezone: timezone ? timezone : '+0300'
                         }
                     }
                 },
